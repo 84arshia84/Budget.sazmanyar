@@ -12,6 +12,6 @@ namespace vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing
         public long Id { get; set; }
         public string Description { get; set; }
 
-        public ICollection<Request.Request> Requests { get; set; }
+        public ICollection<Request.RequestEntity> Requests { get; set; }
     }
 }

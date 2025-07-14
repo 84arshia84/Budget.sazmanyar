@@ -15,5 +15,6 @@ namespace vazaef.sazmanyar.Application.Contracts
         Task AddAsync(CreateRequestDto dto);
         Task<bool> UpdateAsync(long id, EditRequestDto dto);
         Task<bool> DeleteAsync(long id);
+
     }
 }

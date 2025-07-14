@@ -21,6 +21,32 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest.ActionBudgetRequestEntity", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("BudgetAmountPeriod")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("BudgetRequestId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BudgetRequestId");
+
+                    b.ToTable("ActionBudgetRequestEntity");
+                });
+
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing.FundingSource", b =>
                 {
                     b.Property<long>("Id")
@@ -38,7 +64,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.ToTable("FundingSources");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Request.Request", b =>
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Request.RequestEntity", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -114,7 +140,18 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.ToTable("RequestingDepartments");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Request.Request", b =>
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest.ActionBudgetRequestEntity", b =>
+                {
+                    b.HasOne("vazaef.sazmanyar.Domain.Modles.Request.RequestEntity", "BudgetRequest")
+                        .WithMany("ActionBudgetRequests")
+                        .HasForeignKey("BudgetRequestId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BudgetRequest");
+                });
+
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Request.RequestEntity", b =>
                 {
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing.FundingSource", "FundingSource")
                         .WithMany("Requests")
@@ -144,6 +181,11 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing.FundingSource", b =>
                 {
                     b.Navigation("Requests");
+                });
+
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Request.RequestEntity", b =>
+                {
+                    b.Navigation("ActionBudgetRequests");
                 });
 
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestType.RequestType", b =>

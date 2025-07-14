@@ -4,8 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Application.Contracts;
+using vazaef.sazmanyar.Application.Dto.ActionBudgetRequest;
 using vazaef.sazmanyar.Application.Dto.Request;
+using vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest;
 using vazaef.sazmanyar.Domain.Modles.Request;
+
 
 namespace vazaef.sazmanyar.Application.Services
 {
@@ -20,7 +23,7 @@ namespace vazaef.sazmanyar.Application.Services
 
         public async Task AddAsync(CreateRequestDto dto)
         {
-            var request = new Request
+            var request = new RequestEntity
             {
                 RequestTitle = dto.RequestTitle,
                 RequestingDepartmentId = dto.RequestingDepartmentId,
@@ -28,7 +31,12 @@ namespace vazaef.sazmanyar.Application.Services
                 FundingSourceId = dto.FundingSourceId,
                 ApplicationYear = dto.ApplicationYear,
                 TimeFrame = dto.TimeFrame,
-                ServiceDescription = dto.ServiceDescription
+                ServiceDescription = dto.ServiceDescription,
+                ActionBudgetRequests = dto.ActionBudgetRequests.Select(a => new ActionBudgetRequestEntity
+                {
+                    Title = a.Title,
+                    BudgetAmountPeriod = System.Text.Json.JsonSerializer.Serialize(a.BudgetAmountPeriod)
+                }).ToList()
             };
 
             await _repository.AddAsync(request);
@@ -36,7 +44,8 @@ namespace vazaef.sazmanyar.Application.Services
 
         public async Task<IEnumerable<RequestDto>> GetAllAsync()
         {
-            var requests = await _repository.GetAllAsync();
+            var requests = await _repository.GetAllAsync(); // که الان include داره
+
             return requests.Select(r => new RequestDto
             {
                 Id = r.Id,
@@ -47,6 +56,14 @@ namespace vazaef.sazmanyar.Application.Services
                 ApplicationYear = r.ApplicationYear,
                 TimeFrame = r.TimeFrame,
                 ServiceDescription = r.ServiceDescription,
+                ActionBudgetRequests = r.ActionBudgetRequests?.Select(a => new ActionBudgetRequestDto
+                {
+                    Title = a.Title,
+                    TotalActionBudget = 0, // اگر خواستی اینو محاسبه کنیم بگو
+                    BudgetAmountPeriod = string.IsNullOrEmpty(a.BudgetAmountPeriod)
+                        ? new()
+                        : System.Text.Json.JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(a.BudgetAmountPeriod)
+                }).ToList() ?? new List<ActionBudgetRequestDto>()
             });
         }
 
@@ -66,9 +83,16 @@ namespace vazaef.sazmanyar.Application.Services
                 ApplicationYear = r.ApplicationYear,
                 TimeFrame = r.TimeFrame,
                 ServiceDescription = r.ServiceDescription,
+                ActionBudgetRequests = r.ActionBudgetRequests.Select(a => new ActionBudgetRequestDto
+                {
+                    Title = a.Title,
+                    TotalActionBudget = 0, // اینجا مقدار بده یا محاسبه کن
+                    BudgetAmountPeriod = string.IsNullOrEmpty(a.BudgetAmountPeriod) ? new() :
+                     System.Text.Json.JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(a.BudgetAmountPeriod)
+
+                }).ToList()
             };
         }
-
         public async Task<bool> UpdateAsync(long id, EditRequestDto dto)
         {
             var r = await _repository.GetByIdAsync(id);
@@ -96,6 +120,7 @@ namespace vazaef.sazmanyar.Application.Services
             await _repository.DeleteAsync(id);
             return true;
         }
+
     }
 }
 

@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing;
 using vazaef.sazmanyar.Domain.Modles.RequestingUnit;
 using static System.Net.Mime.MediaTypeNames;
-
+using vazaef.sazmanyar.Domain.Modles.Request;
+using RequestModel = vazaef.sazmanyar.Domain.Modles.Request.RequestEntity;
+using vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest;
 namespace vazaef.sazmanyar.Domain.Modles.Request
 {
-    public class Request
+    public class RequestEntity
     {
         public long Id { get; set; }
         public string RequestTitle { get; set; }
@@ -20,11 +22,18 @@ namespace vazaef.sazmanyar.Domain.Modles.Request
         public int TimeFrame { get; set; }
         public string ServiceDescription { get; set; }
 
-        public RequestingDepartment RequestingDepartment { get; set; }
+
+
+        public RequestingUnit.RequestingDepartment RequestingDepartment { get; set; }
         public RequestType.RequestType RequestType { get; set; }
-        public FundingSource FundingSource { get; set; }
+        public PlaceOfFinancing.FundingSource FundingSource { get; set; }
+
+        public ICollection<ActionBudgetRequestEntity> ActionBudgetRequests { get; set; } = new List<ActionBudgetRequestEntity>();
 
     }
+
+
 }
+
 
 

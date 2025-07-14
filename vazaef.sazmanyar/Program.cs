@@ -36,6 +36,10 @@ namespace vazaef.sazmanyar
             builder.Services.AddScoped<IRequestingDepartmentService, RequestingDepartmentService>();
             builder.Services.AddScoped<IRequestService, RequestService>();
             builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            builder.Services.AddScoped<RequestRepository>();
+
+                
 
 
 
