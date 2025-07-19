@@ -4,10 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace vazaef.sazmanyar.Application.Dto.RequestingDepartmen
+namespace vazaef.sazmanyar.Application.Dto.RequestType
 {
-    public class RequestingDepartmentDto
+    public class GetAllRequestTypeDto
     {
+        public long Id { get; set; }
         public string Description { get; set; }
     }
 }

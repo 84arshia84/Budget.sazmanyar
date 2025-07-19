@@ -1,9 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Application.Contracts;
+using vazaef.sazmanyar.Application.Dto.FundingSource;
 using vazaef.sazmanyar.Domain.Modles.fundingSource;
 using vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing;
 
@@ -18,24 +17,48 @@ namespace vazaef.sazmanyar.Application.Services
             _fundingSourceRepository = fundingSourceRepository;
         }
 
-        public async Task<IEnumerable<FundingSource>> GetAllAsync()
+        public async Task<IEnumerable<GetAllFundingSourceDto>> GetAllAsync()
         {
-            return await _fundingSourceRepository.GetAllAsync();
+            var sources = await _fundingSourceRepository.GetAllAsync();
+            return sources.Select(s => new GetAllFundingSourceDto
+            {
+                Id = s.Id,
+                Description = s.Description
+            });
         }
 
-        public async Task<FundingSource> GetByIdAsync(long id)
+        public async Task<GetByIdFundingSourceDto> GetByIdAsync(long id)
         {
-            return await _fundingSourceRepository.GetByIdAsync(id);
+            var source = await _fundingSourceRepository.GetByIdAsync(id);
+            if (source == null)
+                return null;
+
+            return new GetByIdFundingSourceDto
+            {
+                Id = source.Id,
+                Description = source.Description
+            };
         }
 
-        public async Task AddAsync(FundingSource fundingSource)
+        public async Task AddAsync(AddFundingSourceDto dto)
         {
-            await _fundingSourceRepository.AddAsync(fundingSource);
+            var source = new FundingSource
+            {
+                Description = dto.Description
+            };
+
+            await _fundingSourceRepository.AddAsync(source);
         }
 
-        public async Task UpdateAsync(FundingSource fundingSource)
+        public async Task UpdateAsync(UpdateFundingSourceDto dto)
         {
-            await _fundingSourceRepository.UpdateAsync(fundingSource);
+            var source = new FundingSource
+            {
+                Id = dto.Id,
+                Description = dto.Description
+            };
+
+            await _fundingSourceRepository.UpdateAsync(source);
         }
 
         public async Task DeleteAsync(long id)

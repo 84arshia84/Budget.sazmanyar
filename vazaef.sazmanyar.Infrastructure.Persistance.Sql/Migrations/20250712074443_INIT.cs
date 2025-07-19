@@ -5,7 +5,7 @@
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class INIT : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -86,6 +86,32 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ActionBudgetRequestEntity",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BudgetRequestId = table.Column<long>(type: "bigint", nullable: false),
+                    BudgetAmountPeriod = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActionBudgetRequestEntity", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ActionBudgetRequestEntity_Requests_BudgetRequestId",
+                        column: x => x.BudgetRequestId,
+                        principalTable: "Requests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ActionBudgetRequestEntity_BudgetRequestId",
+                table: "ActionBudgetRequestEntity",
+                column: "BudgetRequestId");
+
             migrationBuilder.CreateIndex(
                 name: "IX_Requests_FundingSourceId",
                 table: "Requests",
@@ -105,6 +131,9 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "ActionBudgetRequestEntity");
+
             migrationBuilder.DropTable(
                 name: "Requests");
 

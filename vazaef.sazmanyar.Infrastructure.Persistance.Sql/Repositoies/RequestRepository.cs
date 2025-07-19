@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Domain.Modles.Request;
 
@@ -17,19 +20,23 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
             _context = context;
         }
 
-        public async Task<IEnumerable<Request>> GetAllAsync() =>
-            await _context.Requests.ToListAsync();
+        public async Task<IEnumerable<RequestEntity>> GetAllAsync() =>
+            await _context.Requests
+                .Include(r => r.ActionBudgetRequests)
+                .ToListAsync();
 
-        public async Task<Request> GetByIdAsync(long id) =>
-            await _context.Requests.FindAsync(id);
+        public async Task<RequestEntity> GetByIdAsync(long id) =>
+    await _context.Requests
+        .Include(r => r.ActionBudgetRequests) // ✅ این خط اضافه بشه
+        .FirstOrDefaultAsync(r => r.Id == id);
 
-        public async Task AddAsync(Request request)
+        public async Task AddAsync(RequestEntity request)
         {
             await _context.Requests.AddAsync(request);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(Request request)
+        public async Task UpdateAsync(RequestEntity request)
         {
             _context.Requests.Update(request);
             await _context.SaveChangesAsync();
@@ -44,5 +51,16 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
                 await _context.SaveChangesAsync();
             }
         }
+        public async Task<string> GetAllRequestsWithTotalBudgetJsonAsync()
+        {
+            using var connection = _context.Database.GetDbConnection();
+            var result = await connection.QueryAsync(
+                sql: "sp_GetAllRequestsWithTotalBudget",
+                commandType: CommandType.StoredProcedure);
+
+            var json = JsonSerializer.Serialize(result);
+            return json;
+        }
+
     }
 }

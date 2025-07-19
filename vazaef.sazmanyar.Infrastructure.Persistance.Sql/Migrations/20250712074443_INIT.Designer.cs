@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 
@@ -10,9 +11,11 @@ using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250712074443_INIT")]
+    partial class INIT
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -72,6 +75,9 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<int>("ApplicationYear")
+                        .HasColumnType("int");
+
                     b.Property<long>("FundingSourceId")
                         .HasColumnType("bigint");
 
@@ -90,13 +96,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TimeFrame")
-                        .HasColumnType("int");
-
-                    b.Property<string>("budgetEstimationRanges")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("year")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

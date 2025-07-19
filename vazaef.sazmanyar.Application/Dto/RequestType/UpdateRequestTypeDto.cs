@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace vazaef.sazmanyar.Domain.Modles.RequestType
+namespace vazaef.sazmanyar.Application.Dto.RequestType
 {
-    public class RequestType
+    public class UpdateRequestTypeDto
     {
+        [Required]
         public long Id { get; set; }
         public string Description { get; set; }
-
-        public ICollection<Request.RequestEntity> Requests { get; set; }
     }
 }

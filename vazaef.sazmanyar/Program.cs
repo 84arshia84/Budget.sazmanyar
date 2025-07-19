@@ -23,7 +23,7 @@ namespace vazaef.sazmanyar
             builder.Services.AddControllers();
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
-
+                
             // ثبت DbContext و Repository و Service
             builder.Services.AddDbContext<AppDbContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -31,11 +31,15 @@ namespace vazaef.sazmanyar
             builder.Services.AddScoped<IRequestTypeRepository, RequestTypeRepository>();
             builder.Services.AddScoped<IRequestTypeService, RequestTypeService>();
             builder.Services.AddScoped<IFundingSourceRepository, FundingSourceRepository>();
-            builder.Services.AddScoped<IRequestingDepartmentRepository, RequestingDepartmentRepository>();
+            builder.Services.AddScoped<IRequestingDepartmenRepository, RequestingDepartmenRepository>();
             builder.Services.AddScoped<IFundingSourceService, FundingSourceService>();
-            builder.Services.AddScoped<IRequestingDepartmentService, RequestingDepartmentService>();
+            builder.Services.AddScoped<IRequestingDepartmenService, RequestingDepartmenService>();
             builder.Services.AddScoped<IRequestService, RequestService>();
             builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+            builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+            builder.Services.AddScoped<RequestRepository>();
+
+                
 
 
 

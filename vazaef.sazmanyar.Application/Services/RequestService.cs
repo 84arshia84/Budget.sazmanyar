@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Application.Contracts;
+using vazaef.sazmanyar.Application.Dto.ActionBudgetRequest;
 using vazaef.sazmanyar.Application.Dto.Request;
+using vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest;
 using vazaef.sazmanyar.Domain.Modles.Request;
+
 
 namespace vazaef.sazmanyar.Application.Services
 {
@@ -20,55 +24,41 @@ namespace vazaef.sazmanyar.Application.Services
 
         public async Task AddAsync(CreateRequestDto dto)
         {
-            var request = new Request
+            var request = new RequestEntity
             {
                 RequestTitle = dto.RequestTitle,
                 RequestingDepartmentId = dto.RequestingDepartmentId,
                 RequestTypeId = dto.RequestTypeId,
                 FundingSourceId = dto.FundingSourceId,
-                ApplicationYear = dto.ApplicationYear,
-                TimeFrame = dto.TimeFrame,
-                ServiceDescription = dto.ServiceDescription
+                year = dto.year,
+                ServiceDescription = dto.ServiceDescription,
+                budgetEstimationRanges = dto.budgetEstimationRanges,
+               
             };
 
             await _repository.AddAsync(request);
         }
 
-        public async Task<IEnumerable<RequestDto>> GetAllAsync()
-        {
-            var requests = await _repository.GetAllAsync();
-            return requests.Select(r => new RequestDto
-            {
-                Id = r.Id,
-                RequestTitle = r.RequestTitle,
-                RequestingDepartmentId = r.RequestingDepartmentId,
-                RequestTypeId = r.RequestTypeId,
-                FundingSourceId = r.FundingSourceId,
-                ApplicationYear = r.ApplicationYear,
-                TimeFrame = r.TimeFrame,
-                ServiceDescription = r.ServiceDescription,
-            });
-        }
 
-        public async Task<RequestDto> GetByIdAsync(long id)
+        public async Task<GetRequestByIdDto> GetByIdAsync(long id)
         {
             var r = await _repository.GetByIdAsync(id);
             if (r == null)
                 return null;
 
-            return new RequestDto
+            return new GetRequestByIdDto
             {
                 Id = r.Id,
-                RequestTitle = r.RequestTitle,
                 RequestingDepartmentId = r.RequestingDepartmentId,
                 RequestTypeId = r.RequestTypeId,
                 FundingSourceId = r.FundingSourceId,
-                ApplicationYear = r.ApplicationYear,
-                TimeFrame = r.TimeFrame,
+               
                 ServiceDescription = r.ServiceDescription,
+                year = r.year,
+                budgetEstimationRanges = r.budgetEstimationRanges,
+                
             };
         }
-
         public async Task<bool> UpdateAsync(long id, EditRequestDto dto)
         {
             var r = await _repository.GetByIdAsync(id);
@@ -79,9 +69,8 @@ namespace vazaef.sazmanyar.Application.Services
             r.RequestingDepartmentId = dto.RequestingDepartmentId;
             r.RequestTypeId = dto.RequestTypeId;
             r.FundingSourceId = dto.FundingSourceId;
-            r.ApplicationYear = dto.ApplicationYear;
-            r.TimeFrame = dto.TimeFrame;
             r.ServiceDescription = dto.ServiceDescription;
+            r.year = dto.year;
 
             await _repository.UpdateAsync(r);
             return true;
@@ -96,6 +85,39 @@ namespace vazaef.sazmanyar.Application.Services
             await _repository.DeleteAsync(id);
             return true;
         }
+        public async Task<IEnumerable<GetAllRequestDto>> GetAllWithTotalBudgetAsync()
+        {
+            var json = await _repository.GetAllRequestsWithTotalBudgetJsonAsync();
+
+            var result = JsonSerializer.Deserialize<IEnumerable<GetAllRequestDto>>(json);
+
+            return result ?? new List<GetAllRequestDto>();
+        }
     }
 }
+//public async Task<IEnumerable<RequestDto>> GetAllAsync()
+//{
+//    var requests = await _repository.GetAllAsync(); // که الان include داره
+
+//    return requests.Select(r => new RequestDto
+//    {
+//        Id = r.Id,
+//        RequestTitle = r.RequestTitle,
+//        RequestingDepartmentId = r.RequestingDepartmentId,
+//        RequestTypeId = r.RequestTypeId,
+//        FundingSourceId = r.FundingSourceId,
+//        ApplicationYear = r.ApplicationYear,
+//        TimeFrame = r.TimeFrame,
+//        ServiceDescription = r.ServiceDescription,
+//        ActionBudgetRequests = r.ActionBudgetRequests?.Select(a => new ActionBudgetRequestDto
+//        {
+//            Title = a.Title,
+//            TotalActionBudget = 0, // اگر خواستی اینو محاسبه کنیم بگو
+//            BudgetAmountPeriod = string.IsNullOrEmpty(a.BudgetAmountPeriod)
+//                ? new()
+//                : System.Text.Json.JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(a.BudgetAmountPeriod)
+//        }).ToList() ?? new List<ActionBudgetRequestDto>()
+//    });
+//}
+
 

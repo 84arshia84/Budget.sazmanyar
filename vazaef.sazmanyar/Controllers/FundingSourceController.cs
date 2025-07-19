@@ -20,14 +20,14 @@ namespace vazaef.sazmanyar.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<FundingSource>>> GetAll()
+        public async Task<ActionResult<IEnumerable<GetAllFundingSourceDto>>> GetAll()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<FundingSource>> GetById(long id)
+        public async Task<ActionResult<GetByIdFundingSourceDto>> GetById(long id)
         {
             var result = await _service.GetByIdAsync(id);
             if (result == null)
@@ -37,27 +37,21 @@ namespace vazaef.sazmanyar.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateFundingSource(FundingSourceDto dto)
+        public async Task<ActionResult> CreateFundingSource([FromBody] AddFundingSourceDto dto)
         {
-            var fundingSource = new FundingSource
-            {
-                Description = dto.Description
-            };
-
-            await _service.AddAsync(fundingSource);
-            return Ok();
+            await _service.AddAsync(dto);
+            return Ok(new { message = "منبع تأمین مالی با موفقیت اضافه شد." });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] EditFundingSourceDto dto)
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateFundingSourceDto dto)
         {
-            var EditFundingSourceDto = await _service.GetByIdAsync(id);
-            if (EditFundingSourceDto == null)
+            var existing = await _service.GetByIdAsync(id);
+            if (existing == null)
                 return NotFound();
 
-            EditFundingSourceDto.Description = dto.Description;
-
-            await _service.UpdateAsync(EditFundingSourceDto);
+            dto.Id = id; // اطمینان از ست شدن Id درست
+            await _service.UpdateAsync(dto);
             return NoContent();
         }
 

@@ -10,8 +10,8 @@ namespace vazaef.sazmanyar.Domain.Modles.RequestType
     {
         Task<IEnumerable<RequestType>> GetAllAsync();
         Task<RequestType> GetByIdAsync(long id);
-        Task AddAsync(RequestType requestType);
-        Task UpdateAsync(RequestType requestType);
+        Task AddAsync(RequestType entity);
+        Task UpdateAsync(RequestType entity);
         Task DeleteAsync(long id);
     }
 }
