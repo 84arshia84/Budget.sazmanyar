@@ -8,32 +8,32 @@ using vazaef.sazmanyar.Domain.Modles.RequestingUnit;
 
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
 {
-    public class RequestingDepartmentRepository : IRequestingDepartmentRepository
+    public class RequestingDepartmenRepository : IRequestingDepartmenRepository
     {
         private readonly AppDbContext _context;
 
-        public RequestingDepartmentRepository(AppDbContext context)
+        public RequestingDepartmenRepository(AppDbContext context)
         {
             _context = context;
         }
 
-        public async Task<IEnumerable<RequestingDepartment>> GetAllAsync()
+        public async Task<IEnumerable<RequestingDepartmen>> GetAllAsync()
         {
             return await _context.RequestingDepartments.ToListAsync();
         }
 
-        public async Task<RequestingDepartment> GetByIdAsync(long id)
+        public async Task<RequestingDepartmen> GetByIdAsync(long id)
         {
             return await _context.RequestingDepartments.FindAsync(id);
         }
 
-        public async Task AddAsync(RequestingDepartment requestingDepartment)
+        public async Task AddAsync(RequestingDepartmen requestingDepartment)
         {
             await _context.RequestingDepartments.AddAsync(requestingDepartment);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(RequestingDepartment requestingDepartment)
+        public async Task UpdateAsync(RequestingDepartmen requestingDepartment)
         {
             _context.RequestingDepartments.Update(requestingDepartment);
             await _context.SaveChangesAsync();

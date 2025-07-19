@@ -25,6 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\vazaef.sazmanyar.Application\vazaef.sazmanyar.Application.csproj" />
     <ProjectReference Include="..\vazaef.sazmanyar.Domain\vazaef.sazmanyar.Domain.csproj" />
   </ItemGroup>
 

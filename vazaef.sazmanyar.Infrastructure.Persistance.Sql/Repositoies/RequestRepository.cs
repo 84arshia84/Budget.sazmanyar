@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Domain.Modles.Request;
 
@@ -47,6 +50,16 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
                 _context.Requests.Remove(request);
                 await _context.SaveChangesAsync();
             }
+        }
+        public async Task<string> GetAllRequestsWithTotalBudgetJsonAsync()
+        {
+            using var connection = _context.Database.GetDbConnection();
+            var result = await connection.QueryAsync(
+                sql: "sp_GetAllRequestsWithTotalBudget",
+                commandType: CommandType.StoredProcedure);
+
+            var json = JsonSerializer.Serialize(result);
+            return json;
         }
 
     }

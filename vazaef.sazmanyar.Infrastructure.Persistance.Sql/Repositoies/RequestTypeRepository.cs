@@ -1,9 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using vazaef.sazmanyar.Application.Contracts;
+using vazaef.sazmanyar.Application.Dto.RequestType;
 using vazaef.sazmanyar.Domain.Modles.RequestType;
 
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
@@ -27,24 +24,24 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
             return await _context.RequestTypes.FindAsync(id);
         }
 
-        public async Task AddAsync(RequestType requestType)
+        public async Task AddAsync(RequestType entity)
         {
-            await _context.RequestTypes.AddAsync(requestType);
+            await _context.RequestTypes.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(RequestType requestType)
+        public async Task UpdateAsync(RequestType entity)
         {
-            _context.RequestTypes.Update(requestType);
+            _context.RequestTypes.Update(entity);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(long id)
         {
-            var requestType = await _context.RequestTypes.FindAsync(id);
-            if (requestType != null)
+            var entity = await _context.RequestTypes.FindAsync(id);
+            if (entity != null)
             {
-                _context.RequestTypes.Remove(requestType);
+                _context.RequestTypes.Remove(entity);
                 await _context.SaveChangesAsync();
             }
         }

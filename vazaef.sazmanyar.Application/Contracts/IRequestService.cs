@@ -10,11 +10,12 @@ namespace vazaef.sazmanyar.Application.Contracts
 {
     public interface IRequestService
     {
-        Task<IEnumerable<RequestDto>> GetAllAsync();
-        Task<RequestDto> GetByIdAsync(long id);
+       
+        Task<GetRequestByIdDto> GetByIdAsync(long id);
         Task AddAsync(CreateRequestDto dto);
         Task<bool> UpdateAsync(long id, EditRequestDto dto);
         Task<bool> DeleteAsync(long id);
+        Task<IEnumerable<GetAllRequestDto>> GetAllWithTotalBudgetAsync();
 
     }
 }

@@ -14,65 +14,51 @@ namespace vazaef.sazmanyar.Controllers
     {
         private readonly IRequestTypeService _service;
 
-        public RequestTypeController(IRequestTypeService requestTypeService)
+        public RequestTypeController(IRequestTypeService service)
         {
-            _service = requestTypeService;
+            _service = service;
         }
 
-        // GET: api/RequestType
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RequestType>>> GetRequestTypes()
+        public async Task<ActionResult<IEnumerable<GetAllRequestTypeDto>>> GetAll()
         {
-            var requestTypes = await _service.GetAllRequestTypesAsync();
-            return Ok(requestTypes);
+            var result = await _service.GetAllAsync();
+            return Ok(result);
         }
 
-        // GET: api/RequestType/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<RequestType>> GetRequestType(long id)
+        public async Task<ActionResult<GetByIdRequestTypeDto>> GetById(long id)
         {
-            var requestType = await _service.GetRequestTypeByIdAsync(id);
-
-            if (requestType == null)
-            {
+            var result = await _service.GetByIdAsync(id);
+            if (result == null)
                 return NotFound();
-            }
 
-            return Ok(requestType);
+            return Ok(result);
         }
 
-        // POST: api/RequestType
         [HttpPost]
-        public async Task<ActionResult> CreateRequestType(RequestTypeDto dto)
+        public async Task<IActionResult> Add([FromBody] AddRequestTypeDto dto)
         {
-            var RequestType = new RequestType
-            {
-                Description = dto.Description
-            };
-
-            await _service.AddAsync(RequestType);
-            return Ok();
+            await _service.AddAsync(dto);
+            return Ok(new { message = "نوع درخواست با موفقیت اضافه شد." });
         }
 
-        // PUT: api/RequestType/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] EditRequestingDepartmentDto dto)
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateRequestTypeDto dto)
         {
-            var EditRequestingDepartmentDto = await _service.GetRequestTypeByIdAsync(id);
-            if (EditRequestingDepartmentDto == null)
+            var existing = await _service.GetByIdAsync(id);
+            if (existing == null)
                 return NotFound();
 
-            EditRequestingDepartmentDto.Description = dto.Description;
-
-            await _service.UpdateAsync(EditRequestingDepartmentDto);
+            dto.Id = id;
+            await _service.UpdateAsync(dto);
             return NoContent();
         }
 
-        // DELETE: api/RequestType/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteRequestType(long id)
+        public async Task<IActionResult> Delete(long id)
         {
-            await _service.DeleteRequestTypeAsync(id);
+            await _service.DeleteAsync(id);
             return NoContent();
         }
     }

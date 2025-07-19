@@ -11,7 +11,7 @@ using vazaef.sazmanyar.Domain.Modles.RequestingUnit;
 using vazaef.sazmanyar.Domain.Modles.RequestType;
 using FundingSource = vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing.FundingSource;
 using RequestEntity = vazaef.sazmanyar.Domain.Modles.Request.RequestEntity;
-using RequestingDepartment = vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartment;
+using RequestingDepartmen = vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartmen;
 using RequestType = vazaef.sazmanyar.Domain.Modles.RequestType.RequestType;
 using RequestModel = vazaef.sazmanyar.Domain.Modles.Request.RequestEntity;
 using ActionBudgetRequestModel = vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest.ActionBudgetRequestEntity;
@@ -25,7 +25,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
         }
 
         public DbSet<RequestType> RequestTypes { get; set; }
-        public DbSet<RequestingDepartment> RequestingDepartments { get; set; }
+        public DbSet<RequestingDepartmen> RequestingDepartments { get; set; }
         public DbSet<FundingSource> FundingSources { get; set; }
         public DbSet<RequestEntity> Requests { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)

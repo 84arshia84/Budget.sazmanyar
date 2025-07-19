@@ -10,24 +10,24 @@ namespace vazaef.sazmanyar.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class RequestingDepartmentController : ControllerBase
+    public class RequestingDepartmenController : ControllerBase
     {
-        private readonly IRequestingDepartmentService _service;
+        private readonly IRequestingDepartmenService _service;
 
-        public RequestingDepartmentController(IRequestingDepartmentService service)
+        public RequestingDepartmenController(IRequestingDepartmenService service)
         {
             _service = service;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RequestingDepartment>>> GetAll()
+        public async Task<ActionResult<IEnumerable<GetAllRequestingDepartmenDto>>> GetAll()
         {
             var result = await _service.GetAllAsync();
             return Ok(result);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<RequestingDepartment>> GetById(long id)
+        public async Task<ActionResult<GetByIdRequestingDepartmenDto>> GetById(long id)
         {
             var result = await _service.GetByIdAsync(id);
             if (result == null)
@@ -37,27 +37,21 @@ namespace vazaef.sazmanyar.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateRequestingDepartment(RequestingDepartmentDto dto)
+        public async Task<IActionResult> Add([FromBody] AddRequestingDepartmenDto dto)
         {
-            var RequestingDepartment = new RequestingDepartment
-            {
-                Description = dto.Description
-            };
-
-            await _service.AddAsync(RequestingDepartment);
-            return Ok();
+            await _service.AddAsync(dto);
+            return Ok(new { message = "دپارتمان درخواست‌دهنده با موفقیت اضافه شد." });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] EditRequestingDepartmentDto dto)
+        public async Task<IActionResult> Update(long id, [FromBody] UpdateRequestingDepartmenDto dto)
         {
-            var existingDepartment = await _service.GetByIdAsync(id);
-            if (existingDepartment == null)
+            var existing = await _service.GetByIdAsync(id);
+            if (existing == null)
                 return NotFound();
 
-            existingDepartment.Description = dto.Description;
-
-            await _service.UpdateAsync(existingDepartment);
+            dto.Id = id;
+            await _service.UpdateAsync(dto);
             return NoContent();
         }
 

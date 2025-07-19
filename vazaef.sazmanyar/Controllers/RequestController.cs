@@ -15,18 +15,10 @@ namespace vazaef.sazmanyar.Controllers
         {
             _service = service;
         }
-
-        // GET: api/Request
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<RequestDto>>> GetAllRequests()
-        {
-            var requests = await _service.GetAllAsync();
-            return Ok(requests);
-        }
-
-        // GET: api/Request/5
+       
+        // GET: api/Request/5 
         [HttpGet("{id}")]
-        public async Task<ActionResult<RequestDto>> GetRequestById(long id)
+        public async Task<ActionResult<GetAllRequestDto>> GetRequestById(long id)
         {
             var request = await _service.GetByIdAsync(id);
             if (request == null)
@@ -63,6 +55,12 @@ namespace vazaef.sazmanyar.Controllers
                 return NotFound();
 
             return NoContent();
+        }
+        [HttpGet("with-budget")]
+        public async Task<ActionResult<IEnumerable<GetAllRequestDto>>> GetAllRequestsWithTotalBudget()
+        {
+            var requests = await _service.GetAllWithTotalBudgetAsync();
+            return Ok(requests);
         }
 
     }
