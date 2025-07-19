@@ -33,8 +33,20 @@ namespace vazaef.sazmanyar.Application.Services
                 year = dto.year,
                 ServiceDescription = dto.ServiceDescription,
                 budgetEstimationRanges = dto.budgetEstimationRanges,
-               
             };
+
+            // 👇 نگاشت ActionBudgetRequests به Entity
+            foreach (var actionDto in dto.ActionBudgetRequests)
+            {
+                var actionEntity = new ActionBudgetRequestEntity
+                {
+                    Title = actionDto.Title,
+                    BudgetAmountPeriod = JsonSerializer.Serialize(actionDto.BudgetAmountPeriod),
+                    BudgetRequest = request
+                };
+
+                request.ActionBudgetRequests.Add(actionEntity);
+            }
 
             await _repository.AddAsync(request);
         }

@@ -5,7 +5,7 @@
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     /// <inheritdoc />
-    public partial class INIT : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -59,9 +59,9 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     RequestingDepartmentId = table.Column<long>(type: "bigint", nullable: false),
                     RequestTypeId = table.Column<long>(type: "bigint", nullable: false),
                     FundingSourceId = table.Column<long>(type: "bigint", nullable: false),
-                    ApplicationYear = table.Column<int>(type: "int", nullable: false),
-                    TimeFrame = table.Column<int>(type: "int", nullable: false),
-                    ServiceDescription = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    year = table.Column<int>(type: "int", nullable: false),
+                    ServiceDescription = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    budgetEstimationRanges = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

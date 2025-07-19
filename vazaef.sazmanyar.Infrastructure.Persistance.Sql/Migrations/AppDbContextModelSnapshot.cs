@@ -89,9 +89,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TimeFrame")
-                        .HasColumnType("int");
-
                     b.Property<string>("budgetEstimationRanges")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -127,7 +124,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.ToTable("RequestTypes");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartment", b =>
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartmen", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -169,7 +166,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartment", "RequestingDepartment")
+                    b.HasOne("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartmen", "RequestingDepartment")
                         .WithMany("Requests")
                         .HasForeignKey("RequestingDepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -197,7 +194,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.Navigation("Requests");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartment", b =>
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartmen", b =>
                 {
                     b.Navigation("Requests");
                 });

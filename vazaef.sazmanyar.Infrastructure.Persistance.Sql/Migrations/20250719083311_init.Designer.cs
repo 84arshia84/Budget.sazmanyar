@@ -11,8 +11,8 @@ using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250715123029_qed")]
-    partial class qed
+    [Migration("20250719083311_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -92,9 +92,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TimeFrame")
-                        .HasColumnType("int");
-
                     b.Property<string>("budgetEstimationRanges")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -130,7 +127,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.ToTable("RequestTypes");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartment", b =>
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartmen", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -172,7 +169,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartment", "RequestingDepartment")
+                    b.HasOne("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartmen", "RequestingDepartment")
                         .WithMany("Requests")
                         .HasForeignKey("RequestingDepartmentId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -200,7 +197,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.Navigation("Requests");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartment", b =>
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartmen", b =>
                 {
                     b.Navigation("Requests");
                 });
