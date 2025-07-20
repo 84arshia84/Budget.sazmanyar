@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Dto.Request;
+using vazaef.sazmanyar.Application.Services;
 
 namespace vazaef.sazmanyar.Controllers
 {
@@ -62,6 +63,11 @@ namespace vazaef.sazmanyar.Controllers
             var requests = await _service.GetAllWithTotalBudgetAsync();
             return Ok(requests);
         }
-
+        [HttpPost("get-by-ids")]
+        public async Task<IActionResult> GetByIds([FromBody] List<long> ids)
+        {
+            var data = await _service.GetByIdsAsync(ids);
+            return Ok(data);
+        }
     }
 }

@@ -13,6 +13,5 @@ namespace vazaef.sazmanyar.Application.Dto.ActionBudgetRequest
 
         public List<BudgetAmountPeriodDto> BudgetAmountPeriod { get; set; } = new();
 
-        public decimal TotalActionBudget { get; set; }  // این فقط در DTO هست (نه در Entity)
     }   
 }

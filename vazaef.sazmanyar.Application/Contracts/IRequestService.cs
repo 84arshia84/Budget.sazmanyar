@@ -16,6 +16,7 @@ namespace vazaef.sazmanyar.Application.Contracts
         Task<bool> UpdateAsync(long id, EditRequestDto dto);
         Task<bool> DeleteAsync(long id);
         Task<IEnumerable<GetAllRequestDto>> GetAllWithTotalBudgetAsync();
+        Task<IEnumerable<GetRequestByIdsDto>> GetByIdsAsync(IEnumerable<long> ids);
 
     }
 }

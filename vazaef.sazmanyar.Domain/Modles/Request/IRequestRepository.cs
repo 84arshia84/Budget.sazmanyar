@@ -14,6 +14,8 @@ namespace vazaef.sazmanyar.Domain.Modles.Request
         Task UpdateAsync(RequestEntity request);
         Task DeleteAsync(long id);
         Task<string> GetAllRequestsWithTotalBudgetJsonAsync();
+        Task<string> GetRequestsByIdsWithTotalBudgetJsonAsync(IEnumerable<long> ids);
+
 
     }
 }

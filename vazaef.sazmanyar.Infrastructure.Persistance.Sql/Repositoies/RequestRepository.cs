@@ -1,5 +1,7 @@
 ﻿using Dapper;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -57,6 +59,28 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
             var result = await connection.QueryAsync(
                 sql: "sp_GetAllRequestsWithTotalBudget",
                 commandType: CommandType.StoredProcedure);
+
+            var json = JsonSerializer.Serialize(result);
+            return json;
+        }
+        public async Task<string> GetRequestsByIdsWithTotalBudgetJsonAsync(IEnumerable<long> ids)
+        {
+            var idList = string.Join(",", ids); // مثل: "1,2,3"
+
+            var parameters = new DynamicParameters();
+            parameters.Add("@Ids", idList);
+
+            using var connection = _context.Database.GetDbConnection();
+
+            // اگر اتصال باز نیست، باز کن
+            if (connection.State != ConnectionState.Open)
+                await connection.OpenAsync();
+
+            var result = await connection.QueryAsync(
+                "sp_GetRequestsByIdsWithTotalBudget",
+                parameters,
+                commandType: CommandType.StoredProcedure
+            );
 
             var json = JsonSerializer.Serialize(result);
             return json;

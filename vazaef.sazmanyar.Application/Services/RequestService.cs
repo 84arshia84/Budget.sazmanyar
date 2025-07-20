@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Dto.ActionBudgetRequest;
 using vazaef.sazmanyar.Application.Dto.Request;
+using vazaef.sazmanyar.Application.Validators.ActionBudgetRequest;
 using vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest;
 using vazaef.sazmanyar.Domain.Modles.Request;
 
@@ -24,6 +25,14 @@ namespace vazaef.sazmanyar.Application.Services
 
         public async Task AddAsync(CreateRequestDto dto)
         {
+            // ✅ اعتبارسنجی اصلی ActionBudgetRequestDto
+            var actionValidator = new ActionBudgetRequestDtoValidator();
+
+            foreach (var actionDto in dto.ActionBudgetRequests)
+            {
+                actionValidator.Validate(actionDto); // اینجا ولیدیشن انجام میشه
+            }
+
             var request = new RequestEntity
             {
                 RequestTitle = dto.RequestTitle,
@@ -35,7 +44,6 @@ namespace vazaef.sazmanyar.Application.Services
                 budgetEstimationRanges = dto.budgetEstimationRanges,
             };
 
-            // 👇 نگاشت ActionBudgetRequests به Entity
             foreach (var actionDto in dto.ActionBudgetRequests)
             {
                 var actionEntity = new ActionBudgetRequestEntity
@@ -105,31 +113,16 @@ namespace vazaef.sazmanyar.Application.Services
 
             return result ?? new List<GetAllRequestDto>();
         }
+        public async Task<IEnumerable<GetRequestByIdsDto>> GetByIdsAsync(IEnumerable<long> ids)
+        {
+            var jsonString = await _repository.GetRequestsByIdsWithTotalBudgetJsonAsync(ids);
+
+            var result = JsonSerializer.Deserialize<IEnumerable<GetRequestByIdsDto>>(jsonString);
+
+            return result ?? new List<GetRequestByIdsDto>();
+        }
     }
 }
-//public async Task<IEnumerable<RequestDto>> GetAllAsync()
-//{
-//    var requests = await _repository.GetAllAsync(); // که الان include داره
 
-//    return requests.Select(r => new RequestDto
-//    {
-//        Id = r.Id,
-//        RequestTitle = r.RequestTitle,
-//        RequestingDepartmentId = r.RequestingDepartmentId,
-//        RequestTypeId = r.RequestTypeId,
-//        FundingSourceId = r.FundingSourceId,
-//        ApplicationYear = r.ApplicationYear,
-//        TimeFrame = r.TimeFrame,
-//        ServiceDescription = r.ServiceDescription,
-//        ActionBudgetRequests = r.ActionBudgetRequests?.Select(a => new ActionBudgetRequestDto
-//        {
-//            Title = a.Title,
-//            TotalActionBudget = 0, // اگر خواستی اینو محاسبه کنیم بگو
-//            BudgetAmountPeriod = string.IsNullOrEmpty(a.BudgetAmountPeriod)
-//                ? new()
-//                : System.Text.Json.JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(a.BudgetAmountPeriod)
-//        }).ToList() ?? new List<ActionBudgetRequestDto>()
-//    });
-//}
 
 
