@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Services;
+using vazaef.sazmanyar.Domain.Modles.Allocation;
 using vazaef.sazmanyar.Domain.Modles.fundingSource;
 using vazaef.sazmanyar.Domain.Modles.Request;
 using vazaef.sazmanyar.Domain.Modles.RequestingUnit;
@@ -38,8 +39,10 @@ namespace vazaef.sazmanyar
             builder.Services.AddScoped<IRequestRepository, RequestRepository>();
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
             builder.Services.AddScoped<RequestRepository>();
+            builder.Services.AddScoped<IAllocationRepository, AllocationRepository>();
+            builder.Services.AddScoped<IAllocationService, AllocationService>();
 
-                
+
 
 
 

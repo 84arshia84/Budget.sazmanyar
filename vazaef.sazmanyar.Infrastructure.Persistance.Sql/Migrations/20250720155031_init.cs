@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -10,6 +11,22 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AllocationPayments",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AllocationId = table.Column<long>(type: "bigint", nullable: false),
+                    PaidAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
+                    PaidDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AllocationPayments", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "FundingSources",
                 columns: table => new
@@ -107,10 +124,93 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Allocations",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RequestId = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Allocations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Allocations_Requests_RequestId",
+                        column: x => x.RequestId,
+                        principalTable: "Requests",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AllocationActionBudgetRequests",
+                columns: table => new
+                {
+                    AllocationId = table.Column<long>(type: "bigint", nullable: false),
+                    ActionBudgetRequestId = table.Column<long>(type: "bigint", nullable: false),
+                    AllocatedAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AllocationActionBudgetRequests", x => new { x.AllocationId, x.ActionBudgetRequestId });
+                    table.ForeignKey(
+                        name: "FK_AllocationActionBudgetRequests_ActionBudgetRequestEntity_ActionBudgetRequestId",
+                        column: x => x.ActionBudgetRequestId,
+                        principalTable: "ActionBudgetRequestEntity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_AllocationActionBudgetRequests_Allocations_AllocationId",
+                        column: x => x.AllocationId,
+                        principalTable: "Allocations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AllocationPayment",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AllocationId = table.Column<long>(type: "bigint", nullable: false),
+                    PaidAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaidDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AllocationPayment", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AllocationPayment_Allocations_AllocationId",
+                        column: x => x.AllocationId,
+                        principalTable: "Allocations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_ActionBudgetRequestEntity_BudgetRequestId",
                 table: "ActionBudgetRequestEntity",
                 column: "BudgetRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AllocationActionBudgetRequests_ActionBudgetRequestId",
+                table: "AllocationActionBudgetRequests",
+                column: "ActionBudgetRequestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AllocationPayment_AllocationId",
+                table: "AllocationPayment",
+                column: "AllocationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Allocations_RequestId",
+                table: "Allocations",
+                column: "RequestId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Requests_FundingSourceId",
@@ -132,7 +232,19 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "AllocationActionBudgetRequests");
+
+            migrationBuilder.DropTable(
+                name: "AllocationPayment");
+
+            migrationBuilder.DropTable(
+                name: "AllocationPayments");
+
+            migrationBuilder.DropTable(
                 name: "ActionBudgetRequestEntity");
+
+            migrationBuilder.DropTable(
+                name: "Allocations");
 
             migrationBuilder.DropTable(
                 name: "Requests");
