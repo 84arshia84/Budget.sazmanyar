@@ -10,5 +10,10 @@ namespace vazaef.sazmanyar.Application.Contracts
     public interface IAllocationService
     {
         Task AddAsync(CreateAllocationDto dto);
+
+        Task UpdateAsync(long id, UpdateAllocationDto dto);
+        Task DeleteAsync(long id);
+        Task<AllocationDto?> GetByIdAsync(long id);
+        Task<List<AllocationDto>> GetAllAsync();
     }
 }

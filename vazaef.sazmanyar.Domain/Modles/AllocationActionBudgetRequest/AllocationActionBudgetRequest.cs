@@ -12,7 +12,6 @@ namespace vazaef.sazmanyar.Domain.Modles.AllocationActionBudgetRequest
         public AllocationModel Allocation { get; set; }
         public long ActionBudgetRequestId { get; set; }
         public ActionBudgetRequest.ActionBudgetRequestEntity ActionBudgetRequest { get; set; }
-
         public decimal AllocatedAmount { get; set; }
     }
 

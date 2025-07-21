@@ -12,7 +12,7 @@ namespace vazaef.sazmanyar.Domain.Modles.AllocationPayment
         public long AllocationId { get; set; }
         public decimal PaidAmount { get; set; }
         public DateTime PaidDate { get; set; }
-        public string PaymentType { get; set; }
+        //public string PaymentType { get; set; }
 
         public Allocation.Allocation Allocation { get; set; }
     }

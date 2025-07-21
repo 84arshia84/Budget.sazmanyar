@@ -40,10 +40,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.Property<DateTime>("PaidDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("PaymentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.ToTable("AllocationPayments");
@@ -135,10 +131,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 
                     b.Property<DateTime>("PaidDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -12,6 +12,6 @@ namespace vazaef.sazmanyar.Application.Dto.AllocationPayment
         public long AllocationId { get; set; }
         public decimal PaidAmount { get; set; }
         public DateTime PaidDate { get; set; }
-        public string PaymentType { get; set; }
+        //public string PaymentType { get; set; }
     }
 }

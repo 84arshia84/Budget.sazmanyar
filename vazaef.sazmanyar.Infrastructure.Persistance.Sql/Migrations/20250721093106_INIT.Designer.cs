@@ -12,8 +12,8 @@ using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250720155031_init")]
-    partial class init
+    [Migration("20250721093106_INIT")]
+    partial class INIT
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -42,10 +42,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 
                     b.Property<DateTime>("PaidDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -138,10 +134,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 
                     b.Property<DateTime>("PaidDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("PaymentType")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

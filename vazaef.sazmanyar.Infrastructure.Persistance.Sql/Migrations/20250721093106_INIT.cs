@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class INIT : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,8 +19,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AllocationId = table.Column<long>(type: "bigint", nullable: false),
                     PaidAmount = table.Column<decimal>(type: "decimal(18,2)", precision: 18, scale: 2, nullable: false),
-                    PaidDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PaidDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -178,8 +177,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AllocationId = table.Column<long>(type: "bigint", nullable: false),
                     PaidAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PaidDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentType = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    PaidDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
