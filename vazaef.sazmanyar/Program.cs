@@ -4,6 +4,7 @@ using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Services;
 using vazaef.sazmanyar.Domain.Modles.Allocation;
 using vazaef.sazmanyar.Domain.Modles.fundingSource;
+using vazaef.sazmanyar.Domain.Modles.PaymentMethod;
 using vazaef.sazmanyar.Domain.Modles.Request;
 using vazaef.sazmanyar.Domain.Modles.RequestingUnit;
 using vazaef.sazmanyar.Domain.Modles.RequestType;
@@ -41,7 +42,8 @@ namespace vazaef.sazmanyar
             builder.Services.AddScoped<RequestRepository>();
             builder.Services.AddScoped<IAllocationRepository, AllocationRepository>();
             builder.Services.AddScoped<IAllocationService, AllocationService>();
-
+            builder.Services.AddScoped<IPaymentMethodRepository, PaymentMethodRepository>();
+            builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
 
 
 

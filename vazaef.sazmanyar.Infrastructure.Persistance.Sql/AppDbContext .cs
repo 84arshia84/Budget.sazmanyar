@@ -1,14 +1,15 @@
 ﻿using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
+using vazaef.sazmanyar.Application.Dto.AllocationPayment;
 using vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest;
 using vazaef.sazmanyar.Domain.Modles.Allocation;
 using vazaef.sazmanyar.Domain.Modles.AllocationActionBudgetRequest;
+using vazaef.sazmanyar.Domain.Modles.PaymentMethod;
 using vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing;
 using vazaef.sazmanyar.Domain.Modles.Request;
 using vazaef.sazmanyar.Domain.Modles.RequestingUnit;
 using vazaef.sazmanyar.Domain.Modles.RequestType;
-using vazaef.sazmanyar.Application.Dto.AllocationPayment;
 
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
 {
@@ -26,7 +27,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
         public DbSet<Allocation> Allocations { get; set; }
         public DbSet<AllocationPayment> AllocationPayments { get; set; }
         public DbSet<AllocationActionBudgetRequest> AllocationActionBudgetRequests { get; set; }
-
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // ارتباط Request ⇄ RequestingDepartmen
