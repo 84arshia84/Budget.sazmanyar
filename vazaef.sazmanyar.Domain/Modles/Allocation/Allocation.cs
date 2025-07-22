@@ -15,7 +15,7 @@
             public Request.RequestEntity Request { get; set; }
 
             public List<AllocationABRModel> AllocationActionBudgetRequests { get; set; } = new();
-            public List<AllocationPayment.AllocationPayment> Payments { get; set; } = new();
+            public List<PaymentMethod.PaymentMethod> Payments { get; set; } = new();
         }
     }
 

@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Dto.Allocation;
-using vazaef.sazmanyar.Application.Services;
 
 namespace vazaef.sazmanyar.Controllers
 {

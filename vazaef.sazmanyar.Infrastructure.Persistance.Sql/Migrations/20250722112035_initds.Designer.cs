@@ -12,8 +12,8 @@ using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250721093106_INIT")]
-    partial class INIT
+    [Migration("20250722112035_initds")]
+    partial class initds
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,29 +24,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("vazaef.sazmanyar.Application.Dto.AllocationPayment.AllocationPayment", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("AllocationId")
-                        .HasColumnType("bigint");
-
-                    b.Property<decimal>("PaidAmount")
-                        .HasPrecision(18, 2)
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<DateTime>("PaidDate")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AllocationPayments");
-                });
 
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest.ActionBudgetRequestEntity", b =>
                 {
@@ -118,7 +95,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.ToTable("AllocationActionBudgetRequests");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.AllocationPayment.AllocationPayment", b =>
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Payment.Payment", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -129,17 +106,44 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.Property<long>("AllocationId")
                         .HasColumnType("bigint");
 
-                    b.Property<decimal>("PaidAmount")
+                    b.Property<decimal>("PaymentAmount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime>("PaidDate")
+                    b.Property<DateTime>("PaymentDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<long>("PaymentMethodId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("AllocationId");
 
-                    b.ToTable("AllocationPayment");
+                    b.HasIndex("PaymentMethodId");
+
+                    b.ToTable("Payments");
+                });
+
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.PaymentMethod.PaymentMethod", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("AllocationId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AllocationId");
+
+                    b.ToTable("PaymentMethods");
                 });
 
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing.FundingSource", b =>
@@ -277,15 +281,30 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.Navigation("Allocation");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.AllocationPayment.AllocationPayment", b =>
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Payment.Payment", b =>
                 {
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.Allocation.Allocation", "Allocation")
-                        .WithMany("Payments")
+                        .WithMany()
                         .HasForeignKey("AllocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("vazaef.sazmanyar.Domain.Modles.PaymentMethod.PaymentMethod", "PaymentMethod")
+                        .WithMany()
+                        .HasForeignKey("PaymentMethodId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Allocation");
+
+                    b.Navigation("PaymentMethod");
+                });
+
+            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.PaymentMethod.PaymentMethod", b =>
+                {
+                    b.HasOne("vazaef.sazmanyar.Domain.Modles.Allocation.Allocation", null)
+                        .WithMany("Payments")
+                        .HasForeignKey("AllocationId");
                 });
 
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Request.RequestEntity", b =>

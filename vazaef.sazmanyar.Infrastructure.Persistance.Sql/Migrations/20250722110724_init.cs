@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     /// <inheritdoc />
-    public partial class INIT : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -37,6 +37,19 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FundingSources", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PaymentMethods",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -237,6 +250,9 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 
             migrationBuilder.DropTable(
                 name: "AllocationPayments");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethods");
 
             migrationBuilder.DropTable(
                 name: "ActionBudgetRequestEntity");

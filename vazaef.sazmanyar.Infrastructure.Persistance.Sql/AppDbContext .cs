@@ -1,10 +1,10 @@
 ﻿using Azure.Core;
 using Microsoft.EntityFrameworkCore;
 using System;
-using vazaef.sazmanyar.Application.Dto.AllocationPayment;
 using vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest;
 using vazaef.sazmanyar.Domain.Modles.Allocation;
 using vazaef.sazmanyar.Domain.Modles.AllocationActionBudgetRequest;
+using vazaef.sazmanyar.Domain.Modles.Payment;
 using vazaef.sazmanyar.Domain.Modles.PaymentMethod;
 using vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing;
 using vazaef.sazmanyar.Domain.Modles.Request;
@@ -25,9 +25,9 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
         public DbSet<FundingSource> FundingSources { get; set; }
         public DbSet<RequestEntity> Requests { get; set; }
         public DbSet<Allocation> Allocations { get; set; }
-        public DbSet<AllocationPayment> AllocationPayments { get; set; }
         public DbSet<AllocationActionBudgetRequest> AllocationActionBudgetRequests { get; set; }
         public DbSet<PaymentMethod> PaymentMethods { get; set; }
+        public DbSet<Payment> Payments { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // ارتباط Request ⇄ RequestingDepartmen
@@ -67,15 +67,25 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
                 .HasForeignKey(x => x.ActionBudgetRequestId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // تنظیم دقت برای ستون PaidAmount
-            modelBuilder.Entity<AllocationPayment>()
-                .Property(p => p.PaidAmount)
-                .HasPrecision(18, 2);
-
-            // تنظیم دقت برای ستون AllocatedAmount
+           
             modelBuilder.Entity<AllocationActionBudgetRequest>()
                 .Property(p => p.AllocatedAmount)
                 .HasPrecision(18, 2);
+
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.PaymentMethod)
+                .WithMany()
+                .HasForeignKey(p => p.PaymentMethodId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Allocation)
+                .WithMany()
+                .HasForeignKey(p => p.AllocationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }
