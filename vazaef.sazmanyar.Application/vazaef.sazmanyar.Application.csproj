@@ -7,11 +7,22 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Validators\FundingSource\**" />
+    <Compile Remove="Validators\RequestingDepartmen\**" />
+    <Compile Remove="Validators\RequestType\**" />
+    <Compile Remove="Validators\Request\**" />
+    <EmbeddedResource Remove="Validators\FundingSource\**" />
+    <EmbeddedResource Remove="Validators\RequestingDepartmen\**" />
+    <EmbeddedResource Remove="Validators\RequestType\**" />
+    <EmbeddedResource Remove="Validators\Request\**" />
+    <None Remove="Validators\FundingSource\**" />
+    <None Remove="Validators\RequestingDepartmen\**" />
+    <None Remove="Validators\RequestType\**" />
+    <None Remove="Validators\Request\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Mapper\" />
-    <Folder Include="Validators\FundingSource\" />
-    <Folder Include="Validators\RequestType\" />
-    <Folder Include="Validators\RequestingDepartmen\" />
-    <Folder Include="Validators\Request\" />
   </ItemGroup>
 
   <ItemGroup>

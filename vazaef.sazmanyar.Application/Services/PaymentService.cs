@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Dto.Payment;
+using vazaef.sazmanyar.Application.Validators.Payment;
 using vazaef.sazmanyar.Domain.Modles.Payment;
 
 namespace vazaef.sazmanyar.Application.Services
@@ -12,14 +13,21 @@ namespace vazaef.sazmanyar.Application.Services
     public class PaymentService : IPaymentService
     {
         private readonly IPaymentRepository _repository;
+        private readonly CreatePaymentDtoValidator _validator;
 
-        public PaymentService(IPaymentRepository repository)
+        public PaymentService(
+            IPaymentRepository repository,
+            CreatePaymentDtoValidator validator)
         {
             _repository = repository;
+            _validator = validator;
         }
 
         public async Task CreateAsync(CreatePaymentDto dto)
         {
+            // اعتبارسنجی اختصاصی
+            await _validator.ValidateAsync(dto);
+
             var payment = new Payment
             {
                 PaymentDate = dto.PaymentDate,
@@ -33,8 +41,8 @@ namespace vazaef.sazmanyar.Application.Services
 
         public async Task UpdateAsync(UpdatePaymentDto dto)
         {
-            var payment = await _repository.GetByIdAsync(dto.Id);
-            if (payment == null) throw new Exception("Payment not found");
+            var payment = await _repository.GetByIdAsync(dto.Id)
+                ?? throw new KeyNotFoundException("Payment not found");
 
             payment.PaymentDate = dto.PaymentDate;
             payment.PaymentAmount = dto.PaymentAmount;
@@ -44,30 +52,28 @@ namespace vazaef.sazmanyar.Application.Services
             await _repository.UpdateAsync(payment);
         }
 
-        public async Task DeleteAsync(long id)
-        {
-            await _repository.DeleteAsync(id);
-        }
+        public Task DeleteAsync(long id)
+            => _repository.DeleteAsync(id);
 
-        public async Task<PaymentDto> GetByIdAsync(long id)
+        public async Task<PaymentDto?> GetByIdAsync(long id)
         {
-            var payment = await _repository.GetByIdAsync(id);
-            if (payment == null) return null;
+            var p = await _repository.GetByIdAsync(id);
+            if (p == null) return null;
 
             return new PaymentDto
             {
-                Id = payment.Id,
-                PaymentDate = payment.PaymentDate,
-                PaymentAmount = payment.PaymentAmount,
-                AllocationId = payment.AllocationId,
-                PaymentMethodId = payment.PaymentMethodId
+                Id = p.Id,
+                PaymentDate = p.PaymentDate,
+                PaymentAmount = p.PaymentAmount,
+                AllocationId = p.AllocationId,
+                PaymentMethodId = p.PaymentMethodId
             };
         }
 
         public async Task<List<PaymentDto>> GetAllAsync()
         {
-            var payments = await _repository.GetAllAsync();
-            return payments.Select(p => new PaymentDto
+            var list = await _repository.GetAllAsync();
+            return list.Select(p => new PaymentDto
             {
                 Id = p.Id,
                 PaymentDate = p.PaymentDate,

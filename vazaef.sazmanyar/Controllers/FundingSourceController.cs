@@ -50,7 +50,6 @@ namespace vazaef.sazmanyar.Controllers
             if (existing == null)
                 return NotFound();
 
-            dto.Id = id; // اطمینان از ست شدن Id درست
             await _service.UpdateAsync(dto);
             return NoContent();
         }

@@ -55,7 +55,6 @@ namespace vazaef.sazmanyar.Application.Services
         {
             var entity = new RequestingDepartmen
             {
-                Id = dto.Id,
                 Description = dto.Description
             };
 

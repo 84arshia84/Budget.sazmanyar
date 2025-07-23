@@ -77,6 +77,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.PaymentMethod)
                 .WithMany()
+
                 .HasForeignKey(p => p.PaymentMethodId)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -85,6 +86,8 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
                 .WithMany()
                 .HasForeignKey(p => p.AllocationId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+
 
         }
     }

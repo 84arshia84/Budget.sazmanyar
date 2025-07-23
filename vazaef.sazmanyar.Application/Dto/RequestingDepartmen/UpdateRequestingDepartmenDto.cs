@@ -10,7 +10,6 @@ namespace vazaef.sazmanyar.Application.Dto.RequestingDepartmen
     public class UpdateRequestingDepartmenDto
     {
         [Required]
-        public long Id { get; set; }
         public string Description { get; set; }
     }
 }

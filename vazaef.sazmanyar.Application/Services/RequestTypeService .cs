@@ -54,7 +54,6 @@ namespace vazaef.sazmanyar.Application.Services
         {
             var entity = new RequestType
             {
-                Id = dto.Id,
                 Description = dto.Description
             };
             await _repository.UpdateAsync(entity);

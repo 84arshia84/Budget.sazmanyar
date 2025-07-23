@@ -13,5 +13,8 @@ namespace vazaef.sazmanyar.Domain.Modles.Payment
         Task DeleteAsync(long id);
         Task<Payment> GetByIdAsync(long id);
         Task<List<Payment>> GetAllAsync();
+        Task<decimal> GetTotalPaidByAllocationAsync(long allocationId);
+
     }
 }
+

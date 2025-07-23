@@ -10,7 +10,6 @@ namespace vazaef.sazmanyar.Application.Dto.FundingSource
     public class UpdateFundingSourceDto
     {
         [Required]
-        public long Id { get; set; }
         public string Description { get; set; }
     }
 }

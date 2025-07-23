@@ -54,7 +54,6 @@ namespace vazaef.sazmanyar.Application.Services
         {
             var source = new FundingSource
             {
-                Id = dto.Id,
                 Description = dto.Description
             };
 

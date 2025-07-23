@@ -32,14 +32,35 @@ namespace vazaef.sazmanyar.Application.Services
 
         public async Task CreateAsync(CreatePaymentMethodDto dto)
         {
-            var method = new PaymentMethod { Name = dto.Name };
+            var allMethods = await _repository.GetAllAsync();
+
+            if (allMethods.Any(m => m.Name.Trim().ToLower() == dto.Name.Trim().ToLower()))
+                throw new Exception("روش پرداخت با این نام قبلاً ثبت شده است.");
+
+            var method = new PaymentMethod { Name = dto.Name.Trim() };
             await _repository.AddAsync(method);
         }
 
         public async Task UpdateAsync(long id, CreatePaymentMethodDto dto)
         {
+            // گرفتن رکورد فعلی بر اساس ID
             var method = await _repository.GetByIdAsync(id);
-            method.Name = dto.Name;
+            if (method == null)
+                throw new Exception("روش پرداخت یافت نشد.");
+
+            // گرفتن تمام رکوردها برای بررسی تکراری بودن نام جدید
+            var allMethods = await _repository.GetAllAsync();
+
+            // اگر رکورد دیگه‌ای با همین نام وجود داشت (که IDش با این فرق داره)
+            if (allMethods.Any(m =>
+                    m.Id != id &&
+                    m.Name.Trim().ToLower() == dto.Name.Trim().ToLower()))
+            {
+                throw new Exception("نام وارد شده قبلاً برای روش پرداخت دیگری ثبت شده است.");
+            }
+
+            // ویرایش و ذخیره
+            method.Name = dto.Name.Trim();
             await _repository.UpdateAsync(method);
         }
 

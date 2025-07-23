@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Services;
+using vazaef.sazmanyar.Application.Validators.Payment;
 using vazaef.sazmanyar.Domain.Modles.Allocation;
 using vazaef.sazmanyar.Domain.Modles.fundingSource;
 using vazaef.sazmanyar.Domain.Modles.Payment;
@@ -47,6 +48,8 @@ namespace vazaef.sazmanyar
             builder.Services.AddScoped<IPaymentMethodService, PaymentMethodService>();
             builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
             builder.Services.AddScoped<IPaymentService, PaymentService>();
+            builder.Services.AddScoped<CreatePaymentDtoValidator>();
+
 
 
 

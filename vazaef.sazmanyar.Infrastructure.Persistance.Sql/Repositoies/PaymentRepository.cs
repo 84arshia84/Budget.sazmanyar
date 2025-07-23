@@ -48,5 +48,13 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
         {
             return await _context.Payments.ToListAsync();
         }
+
+        public async Task<decimal> GetTotalPaidByAllocationAsync(long allocationId)
+        {
+            // مجموع مبالغ پرداخت‌شده برای تخصیص مشخص
+            return await _context.Payments
+                .Where(p => p.AllocationId == allocationId)
+                .SumAsync(p => p.PaymentAmount);
+        }
     }
 }

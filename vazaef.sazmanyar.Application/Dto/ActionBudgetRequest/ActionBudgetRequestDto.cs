@@ -10,8 +10,8 @@ namespace vazaef.sazmanyar.Application.Dto.ActionBudgetRequest
     public class ActionBudgetRequestDto
     {
         public string Title { get; set; }
-
         public List<BudgetAmountPeriodDto> BudgetAmountPeriod { get; set; } = new();
+
 
     }   
 }

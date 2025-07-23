@@ -10,7 +10,6 @@ namespace vazaef.sazmanyar.Application.Dto.RequestType
     public class UpdateRequestTypeDto
     {
         [Required]
-        public long Id { get; set; }
         public string Description { get; set; }
     }
 }
