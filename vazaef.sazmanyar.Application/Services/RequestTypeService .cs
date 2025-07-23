@@ -50,13 +50,18 @@ namespace vazaef.sazmanyar.Application.Services
             await _repository.AddAsync(entity);
         }
 
-        public async Task UpdateAsync(UpdateRequestTypeDto dto)
+        public async Task UpdateAsync(long id, UpdateRequestTypeDto dto)
         {
-            var entity = new RequestType
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+                throw new KeyNotFoundException($"RequestType {id} not found.");
+            var update = new RequestType()
             {
+                Id = id,
                 Description = dto.Description
+
             };
-            await _repository.UpdateAsync(entity);
+            await _repository.UpdateAsync(update);
         }
 
         public async Task DeleteAsync(long id)

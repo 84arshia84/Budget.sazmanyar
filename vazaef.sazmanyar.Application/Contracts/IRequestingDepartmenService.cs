@@ -13,7 +13,7 @@ namespace vazaef.sazmanyar.Application.Contracts
         Task<IEnumerable<GetAllRequestingDepartmenDto>> GetAllAsync();
         Task<GetByIdRequestingDepartmenDto> GetByIdAsync(long id);
         Task AddAsync(AddRequestingDepartmenDto dto);
-        Task UpdateAsync(UpdateRequestingDepartmenDto dto);
+        Task UpdateAsync(long id, UpdateRequestingDepartmenDto dto);
         Task DeleteAsync(long id);
     }
 }

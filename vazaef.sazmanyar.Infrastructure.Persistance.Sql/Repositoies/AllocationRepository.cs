@@ -20,13 +20,11 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
         public async Task<IEnumerable<Allocation>> GetAllAsync() =>
             await _context.Allocations
                 .Include(a => a.AllocationActionBudgetRequests)
-                .Include(a => a.Payments)
                 .ToListAsync();
 
         public async Task<Allocation?> GetByIdAsync(long id) =>
             await _context.Allocations
                 .Include(a => a.AllocationActionBudgetRequests)
-                .Include(a => a.Payments)
                 .FirstOrDefaultAsync(a => a.Id == id);
 
         public async Task AddAsync(Allocation allocation)

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Dto.RequestingDepartmen;
 using vazaef.sazmanyar.Domain.Modles.RequestingUnit;
+using vazaef.sazmanyar.Domain.Modles.RequestType;
 
 namespace vazaef.sazmanyar.Application.Services
 {
@@ -51,14 +52,18 @@ namespace vazaef.sazmanyar.Application.Services
             await _repository.AddAsync(entity);
         }
 
-        public async Task UpdateAsync(UpdateRequestingDepartmenDto dto)
+        public async Task UpdateAsync(long id, UpdateRequestingDepartmenDto dto)
         {
-            var entity = new RequestingDepartmen
+            var existing = await _repository.GetByIdAsync(id);
+            if (existing == null)
+                throw new KeyNotFoundException($"UpdateRequestingDepartmenDto {id} not found.");
+            var update = new RequestingDepartmen()
             {
+                Id = id,
                 Description = dto.Description
-            };
 
-            await _repository.UpdateAsync(entity);
+            };
+            await _repository.UpdateAsync(update);
         }
 
         public async Task DeleteAsync(long id)

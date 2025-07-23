@@ -26,7 +26,7 @@ namespace vazaef.sazmanyar.Controllers
             return Ok(new { message = "Allocation created successfully." });
         }
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, [FromBody] UpdateAllocationDto dto)
+         public async Task<IActionResult> Update(long id, [FromBody] UpdateAllocationDto dto)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);

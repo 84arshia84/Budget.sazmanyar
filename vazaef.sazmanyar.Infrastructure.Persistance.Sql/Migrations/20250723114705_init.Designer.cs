@@ -12,8 +12,8 @@ using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250723111939_AddUniqueIndexToPaymentMethodNameqq")]
-    partial class AddUniqueIndexToPaymentMethodNameqq
+    [Migration("20250723114705_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

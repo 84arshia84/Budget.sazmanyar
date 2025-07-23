@@ -13,7 +13,7 @@ namespace vazaef.sazmanyar.Application.Contracts
         Task<IEnumerable<GetAllRequestTypeDto>> GetAllAsync();
         Task<GetByIdRequestTypeDto> GetByIdAsync(long id);
         Task AddAsync(AddRequestTypeDto dto);
-        Task UpdateAsync(UpdateRequestTypeDto dto);
+        Task UpdateAsync(long id,UpdateRequestTypeDto dto);
         Task DeleteAsync(long id);
     }
 }

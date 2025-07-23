@@ -129,16 +129,11 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("AllocationId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("AllocationId");
 
                     b.ToTable("PaymentMethods");
                 });
@@ -297,13 +292,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.Navigation("PaymentMethod");
                 });
 
-            modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.PaymentMethod.PaymentMethod", b =>
-                {
-                    b.HasOne("vazaef.sazmanyar.Domain.Modles.Allocation.Allocation", null)
-                        .WithMany("Payments")
-                        .HasForeignKey("AllocationId");
-                });
-
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Request.RequestEntity", b =>
                 {
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing.FundingSource", "FundingSource")
@@ -334,8 +322,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.Allocation.Allocation", b =>
                 {
                     b.Navigation("AllocationActionBudgetRequests");
-
-                    b.Navigation("Payments");
                 });
 
             modelBuilder.Entity("vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing.FundingSource", b =>

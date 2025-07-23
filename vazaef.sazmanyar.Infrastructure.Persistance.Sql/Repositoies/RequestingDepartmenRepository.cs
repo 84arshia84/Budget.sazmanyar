@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Domain.Modles.RequestingUnit;
+using vazaef.sazmanyar.Domain.Modles.RequestType;
 
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
 {
@@ -35,7 +36,23 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
 
         public async Task UpdateAsync(RequestingDepartmen requestingDepartment)
         {
-            _context.RequestingDepartments.Update(requestingDepartment);
+            var existing = await _context.RequestingDepartments
+            .Include(rt => rt.Requests)
+                .FirstOrDefaultAsync(rt => rt.Id == requestingDepartment.Id);
+
+            if (existing == null)
+                throw new KeyNotFoundException($"requestingDepartment with Id={requestingDepartment.Id} not found.");
+
+            existing.Description = requestingDepartment.Description;
+            if (requestingDepartment.Requests != null && requestingDepartment.Requests.Any())
+            {
+                existing.Requests.Clear();
+                foreach (var req in requestingDepartment.Requests)
+                {
+                    existing.Requests.Add(req);
+                }
+            }
+
             await _context.SaveChangesAsync();
         }
 
