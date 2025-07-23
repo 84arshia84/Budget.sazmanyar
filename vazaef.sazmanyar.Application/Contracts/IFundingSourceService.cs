@@ -13,7 +13,7 @@ namespace vazaef.sazmanyar.Application.Contracts
         Task<IEnumerable<GetAllFundingSourceDto>> GetAllAsync();
         Task<GetByIdFundingSourceDto> GetByIdAsync(long id);
         Task AddAsync(AddFundingSourceDto dto);
-        Task UpdateAsync(UpdateFundingSourceDto dto);
+        Task UpdateAsync(long id, UpdateFundingSourceDto dto);
         Task DeleteAsync(long id);
     }
 }

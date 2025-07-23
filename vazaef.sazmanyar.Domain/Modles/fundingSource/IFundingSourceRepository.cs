@@ -14,5 +14,6 @@ namespace vazaef.sazmanyar.Domain.Modles.fundingSource
         Task AddAsync(FundingSource fundingSource);
         Task UpdateAsync(FundingSource fundingSource);
         Task DeleteAsync(long id);
+        
     }
 }

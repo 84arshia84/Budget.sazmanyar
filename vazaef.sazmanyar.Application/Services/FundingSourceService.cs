@@ -5,6 +5,7 @@ using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Dto.FundingSource;
 using vazaef.sazmanyar.Domain.Modles.fundingSource;
 using vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing;
+using vazaef.sazmanyar.Domain.Modles.RequestType;
 
 namespace vazaef.sazmanyar.Application.Services
 {
@@ -50,14 +51,13 @@ namespace vazaef.sazmanyar.Application.Services
             await _fundingSourceRepository.AddAsync(source);
         }
 
-        public async Task UpdateAsync(UpdateFundingSourceDto dto)
+        public async Task UpdateAsync(long id, UpdateFundingSourceDto dto)
         {
-            var source = new FundingSource
-            {
-                Description = dto.Description
-            };
-
-            await _fundingSourceRepository.UpdateAsync(source);
+            var existing = await _fundingSourceRepository.GetByIdAsync(id);
+            if (existing == null)
+                throw new KeyNotFoundException($"RequestType {id} not found.");
+            existing.Description = dto.Description;
+            await _fundingSourceRepository.UpdateAsync(existing);
         }
 
         public async Task DeleteAsync(long id)

@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Domain.Modles.fundingSource;
 using vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing;
+using vazaef.sazmanyar.Domain.Modles.RequestType;
 
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
 {
@@ -36,7 +37,23 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
 
         public async Task UpdateAsync(FundingSource fundingSource)
         {
-            _context.FundingSources.Update(fundingSource);
+            var existing = await _context.FundingSources
+                .Include(rt => rt.Requests)
+                .FirstOrDefaultAsync(rt => rt.Id == fundingSource.Id);
+
+            if (existing == null)
+                throw new KeyNotFoundException($"RequestType with Id={fundingSource.Id} not found.");
+
+            existing.Description = fundingSource.Description;
+            if (fundingSource.Requests != null && fundingSource.Requests.Any())
+            {
+                existing.Requests.Clear();
+                foreach (var req in fundingSource.Requests)
+                {
+                    existing.Requests.Add(req);
+                }
+            }
+
             await _context.SaveChangesAsync();
         }
 
