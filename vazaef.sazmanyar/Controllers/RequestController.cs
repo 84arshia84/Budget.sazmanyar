@@ -69,5 +69,12 @@ namespace vazaef.sazmanyar.Controllers
             var data = await _service.GetByIdsAsync(ids);
             return Ok(data);
         }
+
+        [HttpGet("with-budget-estimations")]
+        public async Task<IActionResult> GetAllWithEstimations()
+        {
+            var result = await _service.GetAllWithBudgetEstimationAsync();
+            return Ok(result);
+        }
     }
 }

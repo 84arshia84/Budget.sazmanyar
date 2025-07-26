@@ -86,5 +86,12 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
             return json;
         }
 
+        public async Task<List<RequestEntity>> GetAllWithActionBudgetRequestsAsync()
+        {
+            return await _context.Requests
+                .Include(r => r.ActionBudgetRequests)
+                .ToListAsync();
+        }
+
     }
 }

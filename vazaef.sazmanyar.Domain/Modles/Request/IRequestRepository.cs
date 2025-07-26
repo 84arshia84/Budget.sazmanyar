@@ -16,6 +16,7 @@ namespace vazaef.sazmanyar.Domain.Modles.Request
         Task<string> GetAllRequestsWithTotalBudgetJsonAsync();
         Task<string> GetRequestsByIdsWithTotalBudgetJsonAsync(IEnumerable<long> ids);
 
+        Task<List<RequestEntity>> GetAllWithActionBudgetRequestsAsync();
 
     }
 }

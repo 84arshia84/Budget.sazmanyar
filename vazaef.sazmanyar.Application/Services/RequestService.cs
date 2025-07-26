@@ -121,6 +121,52 @@ namespace vazaef.sazmanyar.Application.Services
 
             return result ?? new List<GetRequestByIdsDto>();
         }
+
+
+        public async Task<List<RequestDto>> GetAllWithBudgetEstimationAsync()
+        {
+            var list = await _repository.GetAllWithActionBudgetRequestsAsync();
+
+            return list.Select(r => new RequestDto
+            {
+                Id = r.Id,
+                RequestTitle = r.RequestTitle,
+                RequestingDepartmentId = r.RequestingDepartmentId,
+                RequestTypeId = r.RequestTypeId,
+                FundingSourceId = r.FundingSourceId,
+                ApplicationYear = r.year,
+                ServiceDescription = r.ServiceDescription,
+                BudgetEstimationRanges = r.budgetEstimationRanges, // این مورد در پایین بررسی می‌شود
+                ActionBudgetRequests = r.ActionBudgetRequests.Select(ab =>
+                {
+                    var periods = JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(ab.BudgetAmountPeriod);
+
+                    return new ActionBudgetRequestDto
+                    {
+                        Title = ab.Title,
+                        BudgetAmountPeriod = periods.Select(p =>
+                        {
+                            string month = "01"; // پیش‌فرض
+
+                            if (!string.IsNullOrWhiteSpace(p.EstimationRange) && p.EstimationRange.Length >= 2)
+                            {
+                                month = p.EstimationRange.Substring(0, 2).PadLeft(2, '0');
+                            }
+
+                            string estimationRange = $"{r.year}{month}";
+
+                            return new BudgetAmountPeriodDto
+                            {
+                                EstimationRange = estimationRange,
+                                RequestedAmount = p.RequestedAmount,
+                                PlannedAmount = p.PlannedAmount
+                            };
+                        }).ToList()
+                    };
+                }).ToList()
+            }).ToList();
+        }
+
     }
 }
 
