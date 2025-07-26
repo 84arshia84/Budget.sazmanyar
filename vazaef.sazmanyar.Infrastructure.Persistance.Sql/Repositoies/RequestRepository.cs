@@ -93,5 +93,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Repositoies
                 .ToListAsync();
         }
 
+
+
     }
 }

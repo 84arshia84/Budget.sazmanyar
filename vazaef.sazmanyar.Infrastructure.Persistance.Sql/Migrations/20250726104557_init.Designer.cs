@@ -12,8 +12,8 @@ using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250723124228_initw")]
-    partial class initw
+    [Migration("20250726104557_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

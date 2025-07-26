@@ -25,6 +25,19 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "PaymentMethods",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "RequestingDepartments",
                 columns: table => new
                 {
@@ -155,25 +168,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PaymentMethods",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AllocationId = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_PaymentMethods", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_PaymentMethods_Allocations_AllocationId",
-                        column: x => x.AllocationId,
-                        principalTable: "Allocations",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Payments",
                 columns: table => new
                 {
@@ -217,11 +211,6 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                 column: "RequestId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PaymentMethods_AllocationId",
-                table: "PaymentMethods",
-                column: "AllocationId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Payments_AllocationId",
                 table: "Payments",
                 column: "AllocationId");
@@ -260,10 +249,10 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                 name: "ActionBudgetRequestEntity");
 
             migrationBuilder.DropTable(
-                name: "PaymentMethods");
+                name: "Allocations");
 
             migrationBuilder.DropTable(
-                name: "Allocations");
+                name: "PaymentMethods");
 
             migrationBuilder.DropTable(
                 name: "Requests");

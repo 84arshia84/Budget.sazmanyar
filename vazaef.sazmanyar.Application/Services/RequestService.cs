@@ -43,10 +43,10 @@ namespace vazaef.sazmanyar.Application.Services
 
             foreach (var actionDto in dto.ActionBudgetRequests)
             {
-                // 🔧 اصلاح EstimationRange برای اضافه کردن سال
+               
                 var updatedPeriods = actionDto.BudgetAmountPeriod.Select(p => new BudgetAmountPeriodDto
                 {
-                    EstimationRange = $"{dto.year}{p.EstimationRange.PadLeft(2, '0')}", // ترکیب سال با ماه (01 تا 12)
+                    EstimationRange = $"{dto.year}{p.EstimationRange.PadLeft(2, '0')}", 
                     RequestedAmount = p.RequestedAmount,
                     PlannedAmount = p.PlannedAmount
                 }).ToList();
@@ -54,7 +54,7 @@ namespace vazaef.sazmanyar.Application.Services
                 var actionEntity = new ActionBudgetRequestEntity
                 {
                     Title = actionDto.Title,
-                    BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods), // Serialize لیست جدید
+                    BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods), 
                     BudgetRequest = request
                 };
 
@@ -94,7 +94,27 @@ namespace vazaef.sazmanyar.Application.Services
             r.RequestTypeId = dto.RequestTypeId;
             r.FundingSourceId = dto.FundingSourceId;
             r.ServiceDescription = dto.ServiceDescription;
+
+            // سال جدید
             r.year = dto.year;
+
+            // به‌روزرسانی EstimationRange در ActionBudgetRequests
+            foreach (var ab in r.ActionBudgetRequests)
+            {
+                var periods = JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(ab.BudgetAmountPeriod);
+
+                foreach (var period in periods)
+                {
+                    // استخراج ماه قبلی از EstimationRange (دو رقم آخر)
+                    string oldMonth = period.EstimationRange?.Substring(period.EstimationRange.Length - 2) ?? "01";
+                    string month = oldMonth.PadLeft(2, '0');
+
+                    // مقدار جدید estimationRange
+                    period.EstimationRange = $"{dto.year}{month}";
+                }
+
+                ab.BudgetAmountPeriod = JsonSerializer.Serialize(periods);
+            }
 
             await _repository.UpdateAsync(r);
             return true;
@@ -150,18 +170,9 @@ namespace vazaef.sazmanyar.Application.Services
                         Title = ab.Title,
                         BudgetAmountPeriod = periods.Select(p =>
                         {
-                            string month = "01"; // پیش‌فرض
-
-                            if (!string.IsNullOrWhiteSpace(p.EstimationRange) && p.EstimationRange.Length >= 2)
-                            {
-                                month = p.EstimationRange.Substring(0, 2).PadLeft(2, '0');
-                            }
-
-                            string estimationRange = $"{r.year}{month}";
-
                             return new BudgetAmountPeriodDto
                             {
-                                EstimationRange = estimationRange,
+                                EstimationRange = p.EstimationRange, // ✅ بدون تغییر
                                 RequestedAmount = p.RequestedAmount,
                                 PlannedAmount = p.PlannedAmount
                             };
