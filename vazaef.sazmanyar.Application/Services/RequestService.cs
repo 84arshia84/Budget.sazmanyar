@@ -25,13 +25,10 @@ namespace vazaef.sazmanyar.Application.Services
 
         public async Task AddAsync(CreateRequestDto dto)
         {
-            // ✅ اعتبارسنجی اصلی ActionBudgetRequestDto
             var actionValidator = new ActionBudgetRequestDtoValidator();
 
             foreach (var actionDto in dto.ActionBudgetRequests)
-            {
-                actionValidator.Validate(actionDto); // اینجا ولیدیشن انجام میشه
-            }
+                actionValidator.Validate(actionDto);
 
             var request = new RequestEntity
             {
@@ -46,10 +43,18 @@ namespace vazaef.sazmanyar.Application.Services
 
             foreach (var actionDto in dto.ActionBudgetRequests)
             {
+                // 🔧 اصلاح EstimationRange برای اضافه کردن سال
+                var updatedPeriods = actionDto.BudgetAmountPeriod.Select(p => new BudgetAmountPeriodDto
+                {
+                    EstimationRange = $"{dto.year}{p.EstimationRange.PadLeft(2, '0')}", // ترکیب سال با ماه (01 تا 12)
+                    RequestedAmount = p.RequestedAmount,
+                    PlannedAmount = p.PlannedAmount
+                }).ToList();
+
                 var actionEntity = new ActionBudgetRequestEntity
                 {
                     Title = actionDto.Title,
-                    BudgetAmountPeriod = JsonSerializer.Serialize(actionDto.BudgetAmountPeriod),
+                    BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods), // Serialize لیست جدید
                     BudgetRequest = request
                 };
 
@@ -58,7 +63,6 @@ namespace vazaef.sazmanyar.Application.Services
 
             await _repository.AddAsync(request);
         }
-
 
         public async Task<GetRequestByIdDto> GetByIdAsync(long id)
         {
