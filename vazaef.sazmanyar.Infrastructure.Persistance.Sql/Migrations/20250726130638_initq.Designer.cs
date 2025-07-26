@@ -12,8 +12,8 @@ using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250726104557_init")]
-    partial class init
+    [Migration("20250726130638_initq")]
+    partial class initq
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -281,13 +281,13 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.Allocation.Allocation", "Allocation")
                         .WithMany()
                         .HasForeignKey("AllocationId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.PaymentMethod.PaymentMethod", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Allocation");
