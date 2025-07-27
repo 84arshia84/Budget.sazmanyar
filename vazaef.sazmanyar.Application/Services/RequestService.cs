@@ -24,50 +24,58 @@ namespace vazaef.sazmanyar.Application.Services
         }
 
         // متد افزودن یک درخواست جدید
-        public async Task AddAsync(CreateRequestDto dto)
+    public async Task AddAsync(CreateRequestDto dto)
+{
+    var actionValidator = new ActionBudgetRequestDtoValidator();
+
+    // اعتبارسنجی تمام ActionBudgetRequestها
+    foreach (var actionDto in dto.ActionBudgetRequests)
+        actionValidator.Validate(actionDto);
+
+    // ایجاد یک موجودیت Request
+    var request = new RequestEntity
+    {
+        RequestTitle = dto.RequestTitle,
+        RequestingDepartmentId = dto.RequestingDepartmentId,
+        RequestTypeId = dto.RequestTypeId,
+        FundingSourceId = dto.FundingSourceId,
+        year = dto.year,
+        ServiceDescription = dto.ServiceDescription,
+        budgetEstimationRanges = dto.budgetEstimationRanges,
+    };
+
+    foreach (var actionDto in dto.ActionBudgetRequests)
+    {
+        // قبل از ساخت JSON، اعتبارسنجی ماه انجام می‌شود
+        var updatedPeriods = actionDto.BudgetAmountPeriod.Select(p =>
         {
-            var actionValidator = new ActionBudgetRequestDtoValidator();
+            var month = p.EstimationRange.PadLeft(2, '0'); // اطمینان از اینکه مثلا "2" بشه "02"
 
-            // اعتبارسنجی تمام ActionBudgetRequestها
-            foreach (var actionDto in dto.ActionBudgetRequests)
-                actionValidator.Validate(actionDto);
+            // ✅ اعتبارسنجی اینکه EstimationRange بین 01 تا 12 باشد
+            if (!int.TryParse(month, out int monthInt) || monthInt < 1 || monthInt > 12)
+                throw new ArgumentException($"ماه وارد شده ({month}) معتبر نیست. مقدار باید بین 01 تا 12 باشد.");
 
-            // ایجاد یک موجودیت Request
-            var request = new RequestEntity
+            return new BudgetAmountPeriodDto
             {
-                RequestTitle = dto.RequestTitle,
-                RequestingDepartmentId = dto.RequestingDepartmentId,
-                RequestTypeId = dto.RequestTypeId,
-                FundingSourceId = dto.FundingSourceId,
-                year = dto.year,
-                ServiceDescription = dto.ServiceDescription,
-                budgetEstimationRanges = dto.budgetEstimationRanges,
+                EstimationRange = $"{dto.year}{month}", // ترکیب سال و ماه مثلا: 202501
+                RequestedAmount = p.RequestedAmount,
+                PlannedAmount = p.PlannedAmount
             };
+        }).ToList();
 
-            // تبدیل ActionBudgetRequestهای ورودی به مدل‌های دامنه‌ای
-            foreach (var actionDto in dto.ActionBudgetRequests)
-            {
-                // ساخت لیست جدید BudgetAmountPeriod با تغییر فرمت EstimationRange
-                var updatedPeriods = actionDto.BudgetAmountPeriod.Select(p => new BudgetAmountPeriodDto
-                {
-                    EstimationRange = $"{dto.year}{p.EstimationRange.PadLeft(2, '0')}",
-                    RequestedAmount = p.RequestedAmount,
-                    PlannedAmount = p.PlannedAmount
-                }).ToList();
+        // ساخت ActionBudgetRequestEntity و تبدیل لیست به رشته JSON
+        var actionEntity = new ActionBudgetRequestEntity
+        {
+            Title = actionDto.Title,
+            BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods),
+            BudgetRequest = request
+        };
 
-                // ساخت ActionBudgetRequestEntity و تبدیل لیست به رشته JSON
-                var actionEntity = new ActionBudgetRequestEntity
-                {
-                    Title = actionDto.Title,
-                    BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods), // تبدیل به JSON
-                    BudgetRequest = request // ارتباط با درخواست اصلی
-                };
+        request.ActionBudgetRequests.Add(actionEntity);
+    }
 
-                request.ActionBudgetRequests.Add(actionEntity);
-            }
-
-            await _repository.AddAsync(request); // ذخیره در دیتابیس
-        }
+    await _repository.AddAsync(request); // ذخیره در دیتابیس
+}
 
         // گرفتن یک درخواست بر اساس ID
         public async Task<GetRequestByIdDto> GetByIdAsync(long id)
