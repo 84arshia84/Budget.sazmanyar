@@ -1,21 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using vazaef.sazmanyar.Domain.Modles.Request;
-using ActionBudgetRequestModel = vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest.ActionBudgetRequestEntity;
-using RequestModel = vazaef.sazmanyar.Domain.Modles.Request.RequestEntity;
+﻿using System; // استفاده از فضای نام System برای قابلیت‌های پایه‌ای
+using System.Collections.Generic; // برای استفاده از لیست‌ها و مجموعه‌ها
+using System.Linq; // برای عملیات LINQ
+using System.Text; // برای عملیات روی رشته‌ها
+using System.Threading.Tasks; // برای استفاده از Task و async/await
+using vazaef.sazmanyar.Domain.Modles.Request; // ارجاع به موجودیت Request
+using ActionBudgetRequestModel = vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest.ActionBudgetRequestEntity; // ایجاد alias برای موجودیت ActionBudgetRequest
+using RequestModel = vazaef.sazmanyar.Domain.Modles.Request.RequestEntity; // ایجاد alias برای موجودیت RequestEntity
 
-namespace vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest
+namespace vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest // تعریف فضای نام مربوط به درخواست‌های بودجه‌ای
 {
-    public class ActionBudgetRequestEntity
+    public class ActionBudgetRequestEntity // تعریف کلاس برای نگهداری اطلاعات درخواست بودجه عملیاتی
     {
-        public long Id { get; set; }
-        public string Title { get; set; }
-        public long BudgetRequestId { get; set; }
-        public string BudgetAmountPeriod { get; set; }
+        public long Id { get; set; } // شناسه یکتا
+        public string Title { get; set; } // عنوان درخواست بودجه
+        public long BudgetRequestId { get; set; } // شناسه درخواست اصلی بودجه
+        public string BudgetAmountPeriod { get; set; } // بازه مبلغ بودجه
 
-        public RequestEntity BudgetRequest { get; set; }
+        public RequestEntity BudgetRequest { get; set; } // شیء مرتبط با موجودیت Request
     }
 }

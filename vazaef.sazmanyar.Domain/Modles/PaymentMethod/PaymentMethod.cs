@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace vazaef.sazmanyar.Domain.Modles.PaymentMethod
 {
-    public class PaymentMethod
+    public class PaymentMethod // روش‌های پرداخت مختلف
     {
-        public long Id { get; set; }
-        public string Name { get; set; }
+        public long Id { get; set; } // شناسه
+        public string Name { get; set; } // نام روش پرداخت (مثلاً نقدی، کارت، ...)
     }
 }

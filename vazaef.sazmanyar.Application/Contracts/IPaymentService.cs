@@ -7,12 +7,13 @@ using vazaef.sazmanyar.Application.Dto.Payment;
 
 namespace vazaef.sazmanyar.Application.Contracts
 {
+    // اینترفیس سرویس پرداخت‌ها
     public interface IPaymentService
     {
-        Task CreateAsync(CreatePaymentDto dto);
-        Task UpdateAsync(UpdatePaymentDto dto);
-        Task DeleteAsync(long id);
-        Task<PaymentDto> GetByIdAsync(long id);
-        Task<List<PaymentDto>> GetAllAsync();
+        Task CreateAsync(CreatePaymentDto dto); // ایجاد پرداخت جدید
+        Task UpdateAsync(UpdatePaymentDto dto); // به‌روزرسانی اطلاعات پرداخت
+        Task DeleteAsync(long id); // حذف پرداخت با شناسه
+        Task<PaymentDto> GetByIdAsync(long id); // دریافت اطلاعات پرداخت با شناسه
+        Task<List<PaymentDto>> GetAllAsync(); // دریافت لیست پرداخت‌ها
     }
 }

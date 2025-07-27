@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.Json;
+using System.Text.Json; // برای سریال‌سازی/دیسریال‌سازی JSON
 using System.Threading.Tasks;
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Dto.ActionBudgetRequest;
@@ -11,9 +11,9 @@ using vazaef.sazmanyar.Application.Validators.ActionBudgetRequest;
 using vazaef.sazmanyar.Domain.Modles.ActionBudgetRequest;
 using vazaef.sazmanyar.Domain.Modles.Request;
 
-
 namespace vazaef.sazmanyar.Application.Services
 {
+    // کلاس Service برای مدیریت عملیات مربوط به درخواست‌ها
     public class RequestService : IRequestService
     {
         private readonly IRequestRepository _repository;
@@ -23,13 +23,16 @@ namespace vazaef.sazmanyar.Application.Services
             _repository = repository;
         }
 
+        // متد افزودن یک درخواست جدید
         public async Task AddAsync(CreateRequestDto dto)
         {
             var actionValidator = new ActionBudgetRequestDtoValidator();
 
+            // اعتبارسنجی تمام ActionBudgetRequestها
             foreach (var actionDto in dto.ActionBudgetRequests)
                 actionValidator.Validate(actionDto);
 
+            // ایجاد یک موجودیت Request
             var request = new RequestEntity
             {
                 RequestTitle = dto.RequestTitle,
@@ -41,29 +44,32 @@ namespace vazaef.sazmanyar.Application.Services
                 budgetEstimationRanges = dto.budgetEstimationRanges,
             };
 
+            // تبدیل ActionBudgetRequestهای ورودی به مدل‌های دامنه‌ای
             foreach (var actionDto in dto.ActionBudgetRequests)
             {
-               
+                // ساخت لیست جدید BudgetAmountPeriod با تغییر فرمت EstimationRange
                 var updatedPeriods = actionDto.BudgetAmountPeriod.Select(p => new BudgetAmountPeriodDto
                 {
-                    EstimationRange = $"{dto.year}{p.EstimationRange.PadLeft(2, '0')}", 
+                    EstimationRange = $"{dto.year}{p.EstimationRange.PadLeft(2, '0')}",
                     RequestedAmount = p.RequestedAmount,
                     PlannedAmount = p.PlannedAmount
                 }).ToList();
 
+                // ساخت ActionBudgetRequestEntity و تبدیل لیست به رشته JSON
                 var actionEntity = new ActionBudgetRequestEntity
                 {
                     Title = actionDto.Title,
-                    BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods), 
-                    BudgetRequest = request
+                    BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods), // تبدیل به JSON
+                    BudgetRequest = request // ارتباط با درخواست اصلی
                 };
 
                 request.ActionBudgetRequests.Add(actionEntity);
             }
 
-            await _repository.AddAsync(request);
+            await _repository.AddAsync(request); // ذخیره در دیتابیس
         }
 
+        // گرفتن یک درخواست بر اساس ID
         public async Task<GetRequestByIdDto> GetByIdAsync(long id)
         {
             var r = await _repository.GetByIdAsync(id);
@@ -76,50 +82,49 @@ namespace vazaef.sazmanyar.Application.Services
                 RequestingDepartmentId = r.RequestingDepartmentId,
                 RequestTypeId = r.RequestTypeId,
                 FundingSourceId = r.FundingSourceId,
-               
                 ServiceDescription = r.ServiceDescription,
                 year = r.year,
                 budgetEstimationRanges = r.budgetEstimationRanges,
-                
             };
         }
+
+        // به‌روزرسانی اطلاعات درخواست
         public async Task<bool> UpdateAsync(long id, EditRequestDto dto)
         {
             var r = await _repository.GetByIdAsync(id);
             if (r == null)
                 return false;
 
+            // اعمال تغییرات
             r.RequestTitle = dto.RequestTitle;
             r.RequestingDepartmentId = dto.RequestingDepartmentId;
             r.RequestTypeId = dto.RequestTypeId;
             r.FundingSourceId = dto.FundingSourceId;
             r.ServiceDescription = dto.ServiceDescription;
-
-            // سال جدید
             r.year = dto.year;
 
-            // به‌روزرسانی EstimationRange در ActionBudgetRequests
+            // آپدیت EstimationRange در BudgetAmountPeriodها
             foreach (var ab in r.ActionBudgetRequests)
             {
                 var periods = JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(ab.BudgetAmountPeriod);
 
                 foreach (var period in periods)
                 {
-                    // استخراج ماه قبلی از EstimationRange (دو رقم آخر)
                     string oldMonth = period.EstimationRange?.Substring(period.EstimationRange.Length - 2) ?? "01";
-                    string month = oldMonth.PadLeft(2, '0');
+                    string month = oldMonth.PadLeft(2, '0'); // اضافه کردن صفر از چپ در صورت نیاز
 
-                    // مقدار جدید estimationRange
+                    // ساخت رشته جدید مانند: 202501 برای ژانویه سال 2025
                     period.EstimationRange = $"{dto.year}{month}";
                 }
 
-                ab.BudgetAmountPeriod = JsonSerializer.Serialize(periods);
+                ab.BudgetAmountPeriod = JsonSerializer.Serialize(periods); // ذخیره به صورت JSON
             }
 
             await _repository.UpdateAsync(r);
             return true;
         }
 
+        // حذف یک درخواست
         public async Task<bool> DeleteAsync(long id)
         {
             var r = await _repository.GetByIdAsync(id);
@@ -129,14 +134,19 @@ namespace vazaef.sazmanyar.Application.Services
             await _repository.DeleteAsync(id);
             return true;
         }
+
+        // دریافت تمام درخواست‌ها به همراه جمع بودجه
         public async Task<IEnumerable<GetAllRequestDto>> GetAllWithTotalBudgetAsync()
         {
             var json = await _repository.GetAllRequestsWithTotalBudgetJsonAsync();
 
+            // تبدیل رشته JSON به لیست DTO
             var result = JsonSerializer.Deserialize<IEnumerable<GetAllRequestDto>>(json);
 
             return result ?? new List<GetAllRequestDto>();
         }
+
+        // دریافت مجموعه‌ای از درخواست‌ها بر اساس ID
         public async Task<IEnumerable<GetRequestByIdsDto>> GetByIdsAsync(IEnumerable<long> ids)
         {
             var jsonString = await _repository.GetRequestsByIdsWithTotalBudgetJsonAsync(ids);
@@ -146,7 +156,7 @@ namespace vazaef.sazmanyar.Application.Services
             return result ?? new List<GetRequestByIdsDto>();
         }
 
-
+        // دریافت تمام درخواست‌ها به همراه ActionBudgetRequestها
         public async Task<List<RequestDto>> GetAllWithBudgetEstimationAsync()
         {
             var list = await _repository.GetAllWithActionBudgetRequestsAsync();
@@ -160,7 +170,9 @@ namespace vazaef.sazmanyar.Application.Services
                 FundingSourceId = r.FundingSourceId,
                 ApplicationYear = r.year,
                 ServiceDescription = r.ServiceDescription,
-                BudgetEstimationRanges = r.budgetEstimationRanges, // این مورد در پایین بررسی می‌شود
+                BudgetEstimationRanges = r.budgetEstimationRanges,
+
+                // تبدیل هر ActionBudgetRequest به DTO
                 ActionBudgetRequests = r.ActionBudgetRequests.Select(ab =>
                 {
                     var periods = JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(ab.BudgetAmountPeriod);
@@ -172,18 +184,23 @@ namespace vazaef.sazmanyar.Application.Services
                         {
                             return new BudgetAmountPeriodDto
                             {
-                                EstimationRange = p.EstimationRange, // ✅ بدون تغییر
+                                EstimationRange = p.EstimationRange,
                                 RequestedAmount = p.RequestedAmount,
                                 PlannedAmount = p.PlannedAmount
                             };
                         }).ToList()
                     };
                 }).ToList()
-            }).ToList();
-        }
 
+            }).ToList(); // اجرای نهایی LINQ با ToList()
+        }
     }
 }
 
-
+//عبارت توضیح
+//JsonSerializer.Serialize(obj)	تبدیل شیء به رشته JSON برای ذخیره در دیتابیس
+//JsonSerializer.Deserialize<T>(jsonString)	بازگردانی داده JSON به یک لیست یا شیء قابل استفاده
+//Select(...)	عملیات LINQ برای map کردن لیست‌ها (تبدیل آیتم‌ها)
+//PadLeft(2, '0')	اطمینان از دو رقمی بودن رشته؛ مثلاً "1" می‌شود "01"
+//    ?.Substring(...) ?? "01"	اگر مقدار null باشد، مقدار پیش‌فرض برمی‌گرداند
 

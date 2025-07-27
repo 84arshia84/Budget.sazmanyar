@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace vazaef.sazmanyar.Domain.Modles.RequestingUnit
 {
+    // اینترفیس برای عملیات واحدهای درخواست‌کننده
     public interface IRequestingDepartmenRepository
     {
-        Task<IEnumerable<RequestingDepartmen>> GetAllAsync();
-        Task<RequestingDepartmen> GetByIdAsync(long id);
-        Task AddAsync(RequestingDepartmen entity);
-        Task UpdateAsync(RequestingDepartmen entity);
-        Task DeleteAsync(long id);
+        Task<IEnumerable<RequestingDepartmen>> GetAllAsync(); // دریافت لیست تمام دپارتمان‌ها
+        Task<RequestingDepartmen> GetByIdAsync(long id); // دریافت دپارتمان خاص
+        Task AddAsync(RequestingDepartmen entity); // افزودن دپارتمان جدید
+        Task UpdateAsync(RequestingDepartmen entity); // به‌روزرسانی دپارتمان
+        Task DeleteAsync(long id); // حذف دپارتمان
     }
 }

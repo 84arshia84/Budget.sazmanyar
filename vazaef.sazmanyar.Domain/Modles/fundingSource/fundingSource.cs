@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing
 {
-    public class FundingSource
+    public class FundingSource // منبع تأمین مالی
     {
-        public long Id { get; set; }
-        public string Description { get; set; }
+        public long Id { get; set; } // شناسه
+        public string Description { get; set; } // توضیح منبع تأمین مالی
 
-        public ICollection<Request.RequestEntity> Requests { get; set; }
+        public ICollection<Request.RequestEntity> Requests { get; set; } // لیست درخواست‌هایی که از این منبع استفاده کرده‌اند
     }
 }
