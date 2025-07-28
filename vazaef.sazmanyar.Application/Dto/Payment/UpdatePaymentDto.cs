@@ -8,6 +8,6 @@ namespace vazaef.sazmanyar.Application.Dto.Payment
 {
     public class UpdatePaymentDto : CreatePaymentDto
     {
-        public long Id { get; set; }
+        
     }
 }

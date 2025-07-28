@@ -11,7 +11,7 @@ namespace vazaef.sazmanyar.Application.Contracts
     public interface IPaymentService
     {
         Task CreateAsync(CreatePaymentDto dto); // ایجاد پرداخت جدید
-        Task UpdateAsync(UpdatePaymentDto dto); // به‌روزرسانی اطلاعات پرداخت
+        Task UpdateAsync(long id ,UpdatePaymentDto dto); // به‌روزرسانی اطلاعات پرداخت
         Task DeleteAsync(long id); // حذف پرداخت با شناسه
         Task<PaymentDto> GetByIdAsync(long id); // دریافت اطلاعات پرداخت با شناسه
         Task<List<PaymentDto>> GetAllAsync(); // دریافت لیست پرداخت‌ها

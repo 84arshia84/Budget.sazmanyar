@@ -45,11 +45,12 @@ namespace vazaef.sazmanyar.Application.Services
         }
 
         // متد به‌روزرسانی یک پرداخت موجود
-        public async Task UpdateAsync(UpdatePaymentDto dto)
+        public async Task UpdateAsync(long id ,UpdatePaymentDto dto)
         {
+            await _validator.ValidateAsync(dto);
             // دریافت پرداخت از دیتابیس، اگر نبود استثناء پرتاب می‌شود
             // استفاده از ?? برای بررسی null و جایگزینی با throw
-            var payment = await _repository.GetByIdAsync(dto.Id)
+            var payment = await _repository.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException("Payment not found");
 
             // اعمال تغییرات

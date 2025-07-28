@@ -39,19 +39,24 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
             modelBuilder.Entity<RequestEntity>()
                 .HasOne(r => r.RequestingDepartment)
                 .WithMany(rd => rd.Requests)
-                .HasForeignKey(r => r.RequestingDepartmentId);
+                .HasForeignKey(r => r.RequestingDepartmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             // تعریف رابطه یک به چند بین Request و RequestType
             modelBuilder.Entity<RequestEntity>()
                 .HasOne(r => r.RequestType)
                 .WithMany(rt => rt.Requests)
-                .HasForeignKey(r => r.RequestTypeId);
+                .HasForeignKey(r => r.RequestTypeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             // تعریف رابطه یک به چند بین Request و FundingSource (منبع تامین مالی)
             modelBuilder.Entity<RequestEntity>()
                 .HasOne(r => r.FundingSource)
                 .WithMany(fs => fs.Requests)
-                .HasForeignKey(r => r.FundingSourceId);
+                .HasForeignKey(r => r.FundingSourceId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // تعریف کلید مرکب برای جدول واسط AllocationActionBudgetRequest
             modelBuilder.Entity<AllocationActionBudgetRequest>()
@@ -93,7 +98,15 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Allocation)
                 .WithMany()
-                .HasForeignKey(p => p.AllocationId);
+                .HasForeignKey(p => p.AllocationId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+
+            modelBuilder.Entity<Allocation>()
+                .HasOne(a => a.Request)
+                .WithMany()
+                .HasForeignKey(a => a.RequestId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

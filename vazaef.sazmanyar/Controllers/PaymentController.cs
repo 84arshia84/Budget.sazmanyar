@@ -26,8 +26,7 @@ namespace vazaef.sazmanyar.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(long id, UpdatePaymentDto dto)
         {
-            dto.Id = id;
-            await _service.UpdateAsync(dto);
+            await _service.UpdateAsync(id ,dto);
             return Ok();
         }
 

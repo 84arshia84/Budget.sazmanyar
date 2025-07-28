@@ -36,6 +36,7 @@ namespace vazaef.sazmanyar
             // ثبت Swagger جهت ایجاد مستندات قابل خواندن توسط ماشین و UI جذاب برای تست API
             builder.Services.AddSwaggerGen();
 
+
             // ثبت DbContext برای دسترسی به دیتابیس با اتصال به SQL Server
             // استفاده از رشته اتصال (Connection String) تعریف شده در appsettings.json تحت نام "DefaultConnection"
             builder.Services.AddDbContext<AppDbContext>(options =>
@@ -75,7 +76,7 @@ namespace vazaef.sazmanyar
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(x=>x.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None));
             }
 
             // فعال‌سازی ریدایرکت خودکار از HTTP به HTTPS برای امنیت بیشتر
