@@ -15,7 +15,6 @@ namespace vazaef.sazmanyar.Application.Dto.Request
         public long RequestTypeId { get; set; }
         public long FundingSourceId { get; set; }
         public int ApplicationYear { get; set; }
-        public int TimeFrame { get; set; }
         public string ServiceDescription { get; set; }
         public string BudgetEstimationRanges { get; set; }
 

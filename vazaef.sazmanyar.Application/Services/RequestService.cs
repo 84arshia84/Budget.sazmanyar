@@ -24,59 +24,119 @@ namespace vazaef.sazmanyar.Application.Services
         }
 
         // متد افزودن یک درخواست جدید
-    public async Task AddAsync(CreateRequestDto dto)
-{
-    var actionValidator = new ActionBudgetRequestDtoValidator();
-
-    // اعتبارسنجی تمام ActionBudgetRequestها
-    foreach (var actionDto in dto.ActionBudgetRequests)
-        actionValidator.Validate(actionDto);
-
-    // ایجاد یک موجودیت Request
-    var request = new RequestEntity
-    {
-        RequestTitle = dto.RequestTitle,
-        RequestingDepartmentId = dto.RequestingDepartmentId,
-        RequestTypeId = dto.RequestTypeId,
-        FundingSourceId = dto.FundingSourceId,
-        year = dto.year,
-        ServiceDescription = dto.ServiceDescription,
-        budgetEstimationRanges = dto.budgetEstimationRanges,
-    };
-
-    foreach (var actionDto in dto.ActionBudgetRequests)
-    {
-        // قبل از ساخت JSON، اعتبارسنجی ماه انجام می‌شود
-        var updatedPeriods = actionDto.BudgetAmountPeriod.Select(p =>
+        public async Task AddAsync(CreateRequestDto dto)
         {
-            var month = p.EstimationRange.PadLeft(2, '0'); // اطمینان از اینکه مثلا "2" بشه "02"
+            var actionValidator = new ActionBudgetRequestDtoValidator();
 
-            // ✅ اعتبارسنجی اینکه EstimationRange بین 01 تا 12 باشد
-            if (!int.TryParse(month, out int monthInt) || monthInt < 1 || monthInt > 12)
-                throw new ArgumentException($"ماه وارد شده ({month}) معتبر نیست. مقدار باید بین 01 تا 12 باشد.");
+            // اعتبارسنجی تمام ActionBudgetRequestها
+            foreach (var actionDto in dto.ActionBudgetRequests)
+                actionValidator.Validate(actionDto);
 
-            return new BudgetAmountPeriodDto
+            // ایجاد یک موجودیت Request
+            var request = new RequestEntity
             {
-                EstimationRange = $"{dto.year}{month}", // ترکیب سال و ماه مثلا: 202501
-                RequestedAmount = p.RequestedAmount,
-                PlannedAmount = p.PlannedAmount
+                RequestTitle = dto.RequestTitle,
+                RequestingDepartmentId = dto.RequestingDepartmentId,
+                RequestTypeId = dto.RequestTypeId,
+                FundingSourceId = dto.FundingSourceId,
+                year = dto.year,
+                ServiceDescription = dto.ServiceDescription,
+                budgetEstimationRanges = dto.budgetEstimationRanges,
             };
-        }).ToList();
 
-        // ساخت ActionBudgetRequestEntity و تبدیل لیست به رشته JSON
-        var actionEntity = new ActionBudgetRequestEntity
+            foreach (var actionDto in dto.ActionBudgetRequests)
+            {
+                // قبل از ساخت JSON، اعتبارسنجی ماه انجام می‌شود
+                var updatedPeriods = actionDto.BudgetAmountPeriod.Select(p =>
+                {
+                    var month = p.EstimationRange.PadLeft(2, '0'); // اطمینان از اینکه مثلا "2" بشه "02"
+
+                    // ✅ اعتبارسنجی اینکه EstimationRange بین 01 تا 12 باشد
+                    if (!int.TryParse(month, out int monthInt) || monthInt < 1 || monthInt > 12)
+                        throw new ArgumentException($"ماه وارد شده ({month}) معتبر نیست. مقدار باید بین 01 تا 12 باشد.");
+
+                    return new BudgetAmountPeriodDto
+                    {
+                        EstimationRange = $"{dto.year}{month}", // ترکیب سال و ماه مثلا: 202501
+                        RequestedAmount = p.RequestedAmount,
+                        PlannedAmount = p.PlannedAmount
+                    };
+                }).ToList();
+
+                // ساخت ActionBudgetRequestEntity و تبدیل لیست به رشته JSON
+                var actionEntity = new ActionBudgetRequestEntity
+                {
+                    Title = actionDto.Title,
+                    BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods),
+                    BudgetRequest = request
+                };
+
+                request.ActionBudgetRequests.Add(actionEntity);
+            }
+
+            await _repository.AddAsync(request); // ذخیره در دیتابیس
+        }
+        // به‌روزرسانی اطلاعات درخواست
+        public async Task<bool> UpdateAsync(long id, EditRequestDto dto)
         {
-            Title = actionDto.Title,
-            BudgetAmountPeriod = JsonSerializer.Serialize(updatedPeriods),
-            BudgetRequest = request
-        };
+            var r = await _repository.GetByIdAsync(id);
+            if (r == null)
+                return false;
 
-        request.ActionBudgetRequests.Add(actionEntity);
-    }
+            // اعتبارسنجی داده‌های ورودی برای ActionBudgetRequests
+            var actionValidator = new ActionBudgetRequestDtoValidator();
+            var periodValidator = new BudgetAmountPeriodDtoValidator();
 
-    await _repository.AddAsync(request); // ذخیره در دیتابیس
-}
+            foreach (var actionDto in dto.ActionBudgetRequests)
+            {
+                actionValidator.Validate(actionDto); // ولیدیت کلی Action
 
+                foreach (var period in actionDto.BudgetAmountPeriod)
+                {
+                    periodValidator.Validate(period); // ✅ ولیدیت period (requestedAmount, plannedAmount, EstimationRange)
+                }
+            }
+
+            // آپدیت فیلدهای اصلی
+            r.RequestTitle = dto.RequestTitle;
+            r.RequestingDepartmentId = dto.RequestingDepartmentId;
+            r.RequestTypeId = dto.RequestTypeId;
+            r.FundingSourceId = dto.FundingSourceId;
+            r.year = dto.year;
+            r.ServiceDescription = dto.ServiceDescription;
+            r.budgetEstimationRanges = dto.budgetEstimationRanges;
+
+            // پاک کردن و بازسازی ActionBudgetRequests
+            r.ActionBudgetRequests.Clear();
+
+            foreach (var dtoAb in dto.ActionBudgetRequests)
+            {
+                var periods = new List<BudgetAmountPeriodDto>();
+
+                foreach (var dtoPeriod in dtoAb.BudgetAmountPeriod)
+                {
+                    string month = (dtoPeriod.EstimationRange ?? "01").PadLeft(2, '0').Substring(0, 2);
+                    periods.Add(new BudgetAmountPeriodDto
+                    {
+                        EstimationRange = $"{dto.year}{month}",
+                        RequestedAmount = dtoPeriod.RequestedAmount,
+                        PlannedAmount = dtoPeriod.PlannedAmount
+                    });
+                }
+
+                var ab = new ActionBudgetRequestEntity
+                {
+                    Title = dtoAb.Title,
+                    BudgetAmountPeriod = JsonSerializer.Serialize(periods),
+                    BudgetRequestId = r.Id
+                };
+
+                r.ActionBudgetRequests.Add(ab);
+            }
+
+            await _repository.UpdateAsync(r);
+            return true;
+        }
         // گرفتن یک درخواست بر اساس ID
         public async Task<GetRequestByIdDto> GetByIdAsync(long id)
         {
@@ -96,41 +156,7 @@ namespace vazaef.sazmanyar.Application.Services
             };
         }
 
-        // به‌روزرسانی اطلاعات درخواست
-        public async Task<bool> UpdateAsync(long id, EditRequestDto dto)
-        {
-            var r = await _repository.GetByIdAsync(id);
-            if (r == null)
-                return false;
 
-            // اعمال تغییرات
-            r.RequestTitle = dto.RequestTitle;
-            r.RequestingDepartmentId = dto.RequestingDepartmentId;
-            r.RequestTypeId = dto.RequestTypeId;
-            r.FundingSourceId = dto.FundingSourceId;
-            r.ServiceDescription = dto.ServiceDescription;
-            r.year = dto.year;
-
-            // آپدیت EstimationRange در BudgetAmountPeriodها
-            foreach (var ab in r.ActionBudgetRequests)
-            {
-                var periods = JsonSerializer.Deserialize<List<BudgetAmountPeriodDto>>(ab.BudgetAmountPeriod);
-
-                foreach (var period in periods)
-                {
-                    string oldMonth = period.EstimationRange?.Substring(period.EstimationRange.Length - 2) ?? "01";
-                    string month = oldMonth.PadLeft(2, '0'); // اضافه کردن صفر از چپ در صورت نیاز
-
-                    // ساخت رشته جدید مانند: 202501 برای ژانویه سال 2025
-                    period.EstimationRange = $"{dto.year}{month}";
-                }
-
-                ab.BudgetAmountPeriod = JsonSerializer.Serialize(periods); // ذخیره به صورت JSON
-            }
-
-            await _repository.UpdateAsync(r);
-            return true;
-        }
 
         // حذف یک درخواست
         public async Task<bool> DeleteAsync(long id)
