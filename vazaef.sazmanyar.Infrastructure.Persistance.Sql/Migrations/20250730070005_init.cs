@@ -85,19 +85,19 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         column: x => x.FundingSourceId,
                         principalTable: "FundingSources",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Requests_RequestTypes_RequestTypeId",
                         column: x => x.RequestTypeId,
                         principalTable: "RequestTypes",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Requests_RequestingDepartments_RequestingDepartmentId",
                         column: x => x.RequestingDepartmentId,
                         principalTable: "RequestingDepartments",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -139,7 +139,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                         column: x => x.RequestId,
                         principalTable: "Requests",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(

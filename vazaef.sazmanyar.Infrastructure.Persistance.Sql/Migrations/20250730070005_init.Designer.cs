@@ -12,8 +12,8 @@ using vazaef.sazmanyar.Infrastructure.Persistance.Sql;
 namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250727060556_initqP")]
-    partial class initqP
+    [Migration("20250730070005_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -251,7 +251,7 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.Request.RequestEntity", "Request")
                         .WithMany()
                         .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Request");
@@ -281,13 +281,13 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.Allocation.Allocation", "Allocation")
                         .WithMany()
                         .HasForeignKey("AllocationId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.PaymentMethod.PaymentMethod", "PaymentMethod")
                         .WithMany()
                         .HasForeignKey("PaymentMethodId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Allocation");
@@ -300,19 +300,19 @@ namespace vazaef.sazmanyar.Infrastructure.Persistance.Sql.Migrations
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.PlaceOfFinancing.FundingSource", "FundingSource")
                         .WithMany("Requests")
                         .HasForeignKey("FundingSourceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.RequestType.RequestType", "RequestType")
                         .WithMany("Requests")
                         .HasForeignKey("RequestTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("vazaef.sazmanyar.Domain.Modles.RequestingUnit.RequestingDepartmen", "RequestingDepartment")
                         .WithMany("Requests")
                         .HasForeignKey("RequestingDepartmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("FundingSource");
