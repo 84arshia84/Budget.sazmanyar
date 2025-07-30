@@ -3,6 +3,7 @@
 
 using vazaef.sazmanyar.Application.Contracts;
 using vazaef.sazmanyar.Application.Services;
+using vazaef.sazmanyar.Application.Validators.Allocation;
 using vazaef.sazmanyar.Application.Validators.Payment;
 using vazaef.sazmanyar.Domain.Modles.Allocation;
 using vazaef.sazmanyar.Domain.Modles.fundingSource;
@@ -63,6 +64,8 @@ namespace vazaef.sazmanyar
 
             // ثبت Validator برای اعتبارسنجی داده‌ها هنگام ایجاد پرداخت‌ها (CreatePaymentDto)
             builder.Services.AddScoped<CreatePaymentDtoValidator>();
+            builder.Services.AddScoped<UpdatePaymentDtoValidator>();
+            builder.Services.AddScoped<UpdateAllocationDtoValidator>();
 
             // بارگذاری تنظیمات از فایل appsettings.json بصورت الزامی و با امکان reload خودکار در صورت تغییر فایل
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);

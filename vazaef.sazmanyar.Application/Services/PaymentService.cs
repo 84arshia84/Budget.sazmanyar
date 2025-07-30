@@ -15,43 +15,46 @@ namespace vazaef.sazmanyar.Application.Services
         // تعریف وابستگی‌ها به صورت readonly
         private readonly IPaymentRepository _repository;
         private readonly CreatePaymentDtoValidator _validator;
+        private readonly UpdatePaymentDtoValidator _updateValidator; // ✅ فیلد اضافه شد
 
         // تزریق وابستگی‌ها از طریق Constructor (Dependency Injection)
         public PaymentService(
             IPaymentRepository repository,
-            CreatePaymentDtoValidator validator)
+            CreatePaymentDtoValidator validator,
+            UpdatePaymentDtoValidator updateValidator) // ✅ پارامتر اضافه شد
         {
             _repository = repository;
             _validator = validator;
+            _updateValidator = updateValidator; // ✅ تخصیص صحیح
         }
 
         // متدی برای ایجاد یک پرداخت جدید
         public async Task CreateAsync(CreatePaymentDto dto)
+    {
+        // اجرای عملیات اعتبارسنجی سفارشی روی DTO ورودی
+        await _validator.ValidateAsync(dto);
+
+        // ساخت آبجکت دامنه برای ذخیره‌سازی در پایگاه داده
+        var payment = new Payment
         {
-            // اجرای عملیات اعتبارسنجی سفارشی روی DTO ورودی
-            await _validator.ValidateAsync(dto);
+            PaymentDate = dto.PaymentDate,
+            PaymentAmount = dto.PaymentAmount,
+            AllocationId = dto.AllocationId,
+            PaymentMethodId = dto.PaymentMethodId
+        };
 
-            // ساخت آبجکت دامنه برای ذخیره‌سازی در پایگاه داده
-            var payment = new Payment
-            {
-                PaymentDate = dto.PaymentDate,
-                PaymentAmount = dto.PaymentAmount,
-                AllocationId = dto.AllocationId,
-                PaymentMethodId = dto.PaymentMethodId
-            };
-
-            // ذخیره در دیتابیس از طریق Repository
-            await _repository.AddAsync(payment);
-        }
+        // ذخیره در دیتابیس از طریق Repository
+        await _repository.AddAsync(payment);
+    }
 
         // متد به‌روزرسانی یک پرداخت موجود
-        public async Task UpdateAsync(long id ,UpdatePaymentDto dto)
+        public async Task UpdateAsync(long id, UpdatePaymentDto dto)
         {
-            await _validator.ValidateAsync(dto);
-            // دریافت پرداخت از دیتابیس، اگر نبود استثناء پرتاب می‌شود
-            // استفاده از ?? برای بررسی null و جایگزینی با throw
+            // ✅ استفاده از ولیدیتور جدید
+            await _updateValidator.ValidateAsync(dto, id);
+
             var payment = await _repository.GetByIdAsync(id)
-                ?? throw new KeyNotFoundException("Payment not found");
+                          ?? throw new KeyNotFoundException("Payment not found.");
 
             // اعمال تغییرات
             payment.PaymentDate = dto.PaymentDate;
@@ -59,49 +62,48 @@ namespace vazaef.sazmanyar.Application.Services
             payment.AllocationId = dto.AllocationId;
             payment.PaymentMethodId = dto.PaymentMethodId;
 
-            // بروزرسانی در دیتابیس
             await _repository.UpdateAsync(payment);
         }
 
         // متد حذف یک پرداخت از روی شناسه
         public Task DeleteAsync(long id)
-            => _repository.DeleteAsync(id); // حذف مستقیم بدون عملیات اضافی
+        => _repository.DeleteAsync(id); // حذف مستقیم بدون عملیات اضافی
 
-        // دریافت اطلاعات یک پرداخت خاص
-        public async Task<PaymentDto?> GetByIdAsync(long id)
+    // دریافت اطلاعات یک پرداخت خاص
+    public async Task<PaymentDto?> GetByIdAsync(long id)
+    {
+        // گرفتن اطلاعات از دیتابیس
+        var p = await _repository.GetByIdAsync(id);
+        if (p == null) return null;
+
+        // تبدیل مدل دامنه به DTO جهت بازگشت به UI
+        return new PaymentDto
         {
-            // گرفتن اطلاعات از دیتابیس
-            var p = await _repository.GetByIdAsync(id);
-            if (p == null) return null;
-
-            // تبدیل مدل دامنه به DTO جهت بازگشت به UI
-            return new PaymentDto
-            {
-                Id = p.Id,
-                PaymentDate = p.PaymentDate,
-                PaymentAmount = p.PaymentAmount,
-                AllocationId = p.AllocationId,
-                PaymentMethodId = p.PaymentMethodId
-            };
-        }
-
-        // گرفتن لیست کامل پرداخت‌ها
-        public async Task<List<PaymentDto>> GetAllAsync()
-        {
-            // دریافت لیست از دیتابیس
-            var list = await _repository.GetAllAsync();
-
-            // استفاده از LINQ برای تبدیل مدل‌های دامنه به DTO
-            // متد Select برای map کردن (تبدیل) هر آبجکت استفاده می‌شود
-            // ToList برای تبدیل خروجی IEnumerable به List
-            return list.Select(p => new PaymentDto
-            {
-                Id = p.Id,
-                PaymentDate = p.PaymentDate,
-                PaymentAmount = p.PaymentAmount,
-                AllocationId = p.AllocationId,
-                PaymentMethodId = p.PaymentMethodId
-            }).ToList();
-        }
+            Id = p.Id,
+            PaymentDate = p.PaymentDate,
+            PaymentAmount = p.PaymentAmount,
+            AllocationId = p.AllocationId,
+            PaymentMethodId = p.PaymentMethodId
+        };
     }
+
+    // گرفتن لیست کامل پرداخت‌ها
+    public async Task<List<PaymentDto>> GetAllAsync()
+    {
+        // دریافت لیست از دیتابیس
+        var list = await _repository.GetAllAsync();
+
+        // استفاده از LINQ برای تبدیل مدل‌های دامنه به DTO
+        // متد Select برای map کردن (تبدیل) هر آبجکت استفاده می‌شود
+        // ToList برای تبدیل خروجی IEnumerable به List
+        return list.Select(p => new PaymentDto
+        {
+            Id = p.Id,
+            PaymentDate = p.PaymentDate,
+            PaymentAmount = p.PaymentAmount,
+            AllocationId = p.AllocationId,
+            PaymentMethodId = p.PaymentMethodId
+        }).ToList();
+    }
+}
 }
