@@ -66,7 +66,6 @@ namespace vazaef.sazmanyar
             builder.Services.AddScoped<CreatePaymentDtoValidator>();
             builder.Services.AddScoped<UpdatePaymentDtoValidator>();
             builder.Services.AddScoped<UpdateAllocationDtoValidator>();
-
             // بارگذاری تنظیمات از فایل appsettings.json بصورت الزامی و با امکان reload خودکار در صورت تغییر فایل
             builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 
